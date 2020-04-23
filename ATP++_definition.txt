@@ -1,0 +1,27 @@
+SET <var>                           # Set a variable <var> to None
+SET <var> <val>						# Sets a variable <var> to <val>
+DECL <label>						# Declares the label <label>
+INC <var>							# Increments variable <var> by one
+DEC <var>							# Decrements variable <var> by one
+ADD <var 1> <var 2>					# Adds the values of <var 1> and <var 2> and stores the result in <var 1>
+ADD <var target> <var 1> <var 2>	# Adds the values of <var 1> and <var 2> and stores the result in <var target>
+SUB <var 1> <var 2>					# Substracts the value of <var 2> from <var 1> and stores the result in <var 1>
+SUB <var target> <var 1> <var 2>	# Substracts the value of <var 2> from <var 1> and stores the result in <var target>
+MUL <var 1> <var 2>					# Multiplies the values of <var 1> by the value of <var 2> and stores the result in <var 1>
+MUL <var target> <var 1> <var 2>	# Multiplies the values of <var 1> by the value of <var 2> and stores the result in <var target>
+DIV <var 1> <var 2>					# Divides the value of <var 1> by the value of <var 2> and stores the result in <var 1>
+DIV <var target> <var 1> <var 2>	# Divides the value of <var 1> by the value of <var 2> and stores the result in <var target>
+MOD <var 1> <var 2>					# Computes <var 1> modulo <var 2> and stores the result in <var 1>
+MOD <var target> <var 1> <var 2>	# Computes <var 1> modulo <var 2> and stores the result in <var target>
+JE <var 1> <label>					# Jumps to <label> if <var 1> is equal to 0
+JE <var 1> <var 2> <label>			# Jumps to <label> if <var 1> equals <var 2>
+JNE <var 1> <label>					# Jumps to <label> if <var 1> is not equal to 0
+JNE <var 1> <var 2> <label>			# Jumps to <label> if <var 1> is not equal to <var 2>
+JL <var 1> <label>					# Jumps to <label> if <var 1> is less than 0
+JL <var 1> <var 2> <label>			# Jumps to <label> if <var 1> is less than <var 2>
+JG <var 1> <label>					# Jumps to <label> if <var 1> is greater than 0
+JG <var 1> <var 2> <label>			# Jumps to <label> if <var 1> is greater than <var 2>
+JGE <var 1> <label>					# Jumps to <label> if <var 1> is greather than or equal to 0
+JGE <var 1> <var 2> <label>			# Jumps to <label> if <var 1> is greather than or equal to <var 2>
+JLE <var 1> <label>					# Jumps to <label> if <var 1> is less than or equal to 0
+JLE <var 1> <var 2> <label>			# Jumps to <label> if <var 1> is less than or equal to <var 2>

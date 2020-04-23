@@ -1,0 +1,9 @@
+DECL .main
+SET i 1
+
+DECL .loop
+INC i
+JE .end i 1000
+JNE .loop i
+
+DECL .end
