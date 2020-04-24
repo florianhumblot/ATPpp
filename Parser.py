@@ -22,7 +22,7 @@ class ProgramState:
 
 # setVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def setVariable(ps: ProgramState, parameters: dict):
+def setVariable(ps: ProgramState, parameters: dict) -> ProgramState:
     if "right" in parameters.keys():
         ps, right = checkVariable(ps, "right", parameters)
     else:
@@ -51,7 +51,7 @@ def checkVariable(ps: ProgramState, key: str, parameters: dict) -> Union[
 
 # checkPrintParameters :: ProgramState -> dict -> Tuple[ProgramState, Either int float str]
 @ATPTools.copyParameters
-def checkPrintParameters(ps: ProgramState, parameters: dict):
+def checkPrintParameters(ps: ProgramState, parameters: dict) -> Tuple[ProgramState, Union[int, float, str]]:
     if parameters["right"] not in ps.variables.keys():
         if parameters["right"][0] == '"' and parameters["right"][-1] == '"':
             right = parameters["right"]
@@ -62,9 +62,10 @@ def checkPrintParameters(ps: ProgramState, parameters: dict):
     return ps, right
 
 
-# checkFuncArguments :: ProgramState -> dict -> str -> Tuple(ProgramState, Union[float, int None], Union[float, int None])
+# checkFuncArguments :: ProgramState -> dict -> str -> Tuple(ProgramState, Union[float, int, None], Union[float, int, None])
 @ATPTools.copyParameters
-def checkFuncArguments(ps: ProgramState, parameters: dict, instruction: str):
+def checkFuncArguments(ps: ProgramState, parameters: dict, instruction: str) -> Tuple[
+    ProgramState, Union[float, int, None], Union[float, int, None]]:
     if "target" not in parameters.keys() or parameters["target"] in ("", None):
         ps.errors.append("{1} expects a name on line {0}".format(ps.current_pos, instruction))
         return ps, None, None
@@ -87,9 +88,10 @@ def checkFuncArguments(ps: ProgramState, parameters: dict, instruction: str):
     return ps, None, None
 
 
-# checkJumpArguments :: ProgramState -> dict -> str -> Tuple(ProgramState, Union[float, int None], Union[float, int None])
+# checkJumpArguments :: ProgramState -> dict -> str -> Tuple(ProgramState, Union[float, int, None], Union[float, int, None])
 @ATPTools.copyParameters
-def checkJumpArguments(ps: ProgramState, parameters, instruction: str):
+def checkJumpArguments(ps: ProgramState, parameters, instruction: str) -> Tuple[
+    ProgramState, Union[float, int, None], Union[float, int, None]]:
     if "target" not in parameters.keys() or parameters["target"] in ("", None):
         ps.errors.append("{1} expects a label on line {0}".format(ps.current_pos, instruction))
         return ps, None, None
@@ -273,7 +275,7 @@ def parseLabels(tokens: List[Tuple[Lexer.Instruction, dict]], counter: int = 0) 
 
 # runProgram :: ProgramState -> ProgramState
 @ATPTools.copyParameters
-def runProgram(ps: ProgramState):
+def runProgram(ps: ProgramState) -> ProgramState:
     if ps.current_pos == len(ps.instructions) - 1:
         return ps
     ps.current_pos += 1
