@@ -1,6 +1,6 @@
 from enum import Enum
 from functools import reduce
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, Optional
 import re
 import ATPTools
 
@@ -406,19 +406,20 @@ def strToLines(input_string: str) -> List[str]:
     return [input_string[:input_string.index('\n')]] + strToLines(input_string[input_string.index('\n') + 1:])
 
 
+# mapDataTypes :: dict -> dict
 @ATPTools.copyParameters
 def mapDataTypes(input_dict: dict) -> dict:
     return dict(map(lambda kv: (kv[0], strToDataType(kv[1])), input_dict.items()))
 
 
-# regexTest :: Instruction str -> Either dict None
+# regexTest :: Instruction -> str -> Either dict None
 @ATPTools.copyParameters
 def regexTest(instruction_type: Instruction, string: str) -> Union[dict, None]:
     pattern = re.compile(instruction_type.regex)
     match = re.fullmatch(pattern, string)
     return mapDataTypes(match.groupdict()) if match is not None else None
 
-
+# strToDataType :: str -> Either str float int
 @ATPTools.copyParameters
 def strToDataType(input_string: str) -> Union[str, float, int]:
     try:
@@ -462,7 +463,7 @@ def matchToken(input_string: str) -> Union[Tuple[Instruction, dict], None]:
 
 # lexInput :: [str] -> [Tokens]
 @ATPTools.copyParameters
-def lexInput(input_program: List[str]):
+def lexInput(input_program: List[str]) -> List[Tuple[Instruction, dict]]:
     if len(input_program) == 0:
         return []
     return [matchToken(input_program[0])] + lexInput(input_program[1:])

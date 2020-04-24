@@ -20,6 +20,7 @@ class ProgramState:
             err=self.errors, line=self.current_pos)
 
 
+# setVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def setVariable(ps: ProgramState, parameters: dict):
     if "right" in parameters.keys():
@@ -33,6 +34,7 @@ def setVariable(ps: ProgramState, parameters: dict):
     return ps
 
 
+# checkVariable :: ProgramState -> str -> dict -> Either Tuple[ProgramState, Either str float int None] ProgramState
 @ATPTools.copyParameters
 def checkVariable(ps: ProgramState, key: str, parameters: dict) -> Union[
     Tuple[ProgramState, Union[str, float, int, None]], ProgramState]:
@@ -47,6 +49,7 @@ def checkVariable(ps: ProgramState, key: str, parameters: dict) -> Union[
         return ps, var
 
 
+# checkPrintParameters :: ProgramState -> dict -> Tuple[ProgramState, Either int float str]
 @ATPTools.copyParameters
 def checkPrintParameters(ps: ProgramState, parameters: dict):
     if parameters["right"] not in ps.variables.keys():
@@ -59,6 +62,7 @@ def checkPrintParameters(ps: ProgramState, parameters: dict):
     return ps, right
 
 
+# checkFuncArguments :: ProgramState -> dict -> str -> Tuple(ProgramState, Union[float, int None], Union[float, int None])
 @ATPTools.copyParameters
 def checkFuncArguments(ps: ProgramState, parameters: dict, instruction: str):
     if "target" not in parameters.keys() or parameters["target"] in ("", None):
@@ -83,6 +87,7 @@ def checkFuncArguments(ps: ProgramState, parameters: dict, instruction: str):
     return ps, None, None
 
 
+# checkJumpArguments :: ProgramState -> dict -> str -> Tuple(ProgramState, Union[float, int None], Union[float, int None])
 @ATPTools.copyParameters
 def checkJumpArguments(ps: ProgramState, parameters, instruction: str):
     if "target" not in parameters.keys() or parameters["target"] in ("", None):
@@ -104,24 +109,27 @@ def checkJumpArguments(ps: ProgramState, parameters, instruction: str):
     return ps, None, None
 
 
+# incrementVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def incrementVariable(ps, parameters):
+def incrementVariable(ps: ProgramState, parameters: dict) -> ProgramState:
     if "target" not in parameters.keys():
         ps.errors.append("target must be specified for increment on line {0}".format(ps.current_pos))
     ps.variables[parameters["target"]] = ps.variables[parameters["target"]] + 1
     return ps
 
 
+# decrementVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def decrementVariable(ps, parameters):
+def decrementVariable(ps: ProgramState, parameters: dict) -> ProgramState:
     if "target" not in parameters.keys():
         ps.errors.append("target must be specified for decrement on line {0}".format(ps.current_pos))
     ps.variables[parameters["target"]] = ps.variables[parameters["target"]] - 1
     return ps
 
 
+# addToVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def addToVariable(ps: ProgramState, parameters: dict):
+def addToVariable(ps: ProgramState, parameters: dict) -> ProgramState:
     ps, left, right = checkFuncArguments(ps, parameters, "ADD")
     if left is None or right is None:
         return ps
@@ -129,8 +137,9 @@ def addToVariable(ps: ProgramState, parameters: dict):
     return ps
 
 
+# subtractFromVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def subtractFromVariable(ps, parameters):
+def subtractFromVariable(ps: ProgramState, parameters: dict) -> ProgramState:
     ps, left, right = checkFuncArguments(ps, parameters, "SUB")
     if left is None or right is None:
         return ps
@@ -138,8 +147,9 @@ def subtractFromVariable(ps, parameters):
     return ps
 
 
+# multiplyByVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def multiplyByVariable(ps, parameters):
+def multiplyByVariable(ps: ProgramState, parameters: dict) -> ProgramState:
     ps, left, right = checkFuncArguments(ps, parameters, "MUL")
     if left is None or right is None:
         return ps
@@ -147,8 +157,9 @@ def multiplyByVariable(ps, parameters):
     return ps
 
 
+# divideByVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def divideByVariable(ps, parameters):
+def divideByVariable(ps: ProgramState, parameters: dict) -> ProgramState:
     ps, left, right = checkFuncArguments(ps, parameters, "DIV")
     if left is None or right is None:
         return ps
@@ -159,8 +170,9 @@ def divideByVariable(ps, parameters):
     return ps
 
 
+# modulo :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def modulo(ps, parameters):
+def modulo(ps: ProgramState, parameters: dict) -> ProgramState:
     ps, left, right = checkFuncArguments(ps, parameters, "DIV")
     if left is None or right is None:
         return ps
@@ -171,8 +183,9 @@ def modulo(ps, parameters):
     return ps
 
 
+# jump_equal :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def jump_equal(ps, parameters):
+def jump_equal(ps: ProgramState, parameters: dict) -> ProgramState:
     ps, left, right = checkJumpArguments(ps, parameters, "JE")
     if left is None or right is None:
         return ps
@@ -181,8 +194,9 @@ def jump_equal(ps, parameters):
     return ps
 
 
+# jump_not_equal :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def jump_not_equal(ps, parameters):
+def jump_not_equal(ps: ProgramState, parameters: dict) -> ProgramState:
     ps, left, right = checkJumpArguments(ps, parameters, "JNE")
     if left is None or right is None:
         return ps
@@ -191,8 +205,9 @@ def jump_not_equal(ps, parameters):
     return ps
 
 
+# jump_less_than :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def jump_less_than(ps, parameters):
+def jump_less_than(ps: ProgramState, parameters: dict) -> ProgramState:
     ps, left, right = checkJumpArguments(ps, parameters, "JL")
     if left is None or right is None:
         return ps
@@ -201,8 +216,9 @@ def jump_less_than(ps, parameters):
     return ps
 
 
+# jump_greater_than :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def jump_greater_than(ps, parameters):
+def jump_greater_than(ps: ProgramState, parameters: dict) -> ProgramState:
     ps, left, right = checkJumpArguments(ps, parameters, "JG")
     if left is None or right is None:
         return ps
@@ -211,8 +227,9 @@ def jump_greater_than(ps, parameters):
     return ps
 
 
+# jump_less_or_equal :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def jump_less_or_equal(ps, parameters):
+def jump_less_or_equal(ps: ProgramState, parameters: dict) -> ProgramState:
     ps, left, right = checkJumpArguments(ps, parameters, "JLE")
     if left is None or right is None:
         return ps
@@ -221,8 +238,9 @@ def jump_less_or_equal(ps, parameters):
     return ps
 
 
+# jump_greater_or_equal :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def jump_greater_or_equal(ps, parameters):
+def jump_greater_or_equal(ps: ProgramState, parameters: dict) -> ProgramState:
     ps, left, right = checkJumpArguments(ps, parameters, "JGE")
     if left is None or right is None:
         return ps
@@ -231,8 +249,9 @@ def jump_greater_or_equal(ps, parameters):
     return ps
 
 
+# ATPPrint :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
-def ATPPrint(ps, parameters):
+def ATPPrint(ps: ProgramState, parameters: dict) -> ProgramState:
     ps, right = checkPrintParameters(ps, parameters)
     if right is None:
         ps.errors.append("Incorrect parameter for PRINT on line {0}".format(ps.current_pos))
@@ -240,6 +259,8 @@ def ATPPrint(ps, parameters):
     print("> {}".format(right))
     return ps
 
+
+# parseLabels :: List[Tuple[Instruction, dict]] -> int -> dict
 @ATPTools.copyParameters
 def parseLabels(tokens: List[Tuple[Lexer.Instruction, dict]], counter: int = 0) -> dict:
     if len(tokens) == 0:
@@ -250,6 +271,7 @@ def parseLabels(tokens: List[Tuple[Lexer.Instruction, dict]], counter: int = 0) 
         return parseLabels(tokens[1:], counter + 1)
 
 
+# runProgram :: ProgramState -> ProgramState
 @ATPTools.copyParameters
 def runProgram(ps: ProgramState):
     if ps.current_pos == len(ps.instructions) - 1:
