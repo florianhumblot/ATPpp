@@ -1,13 +1,19 @@
+import sys
 from functools import reduce
+from time import time
 
 import Lexer
 import Parser
-from pprint import pprint
-import re
-from time import time
-import sys
 
-sys.setrecursionlimit(150000)
+
+def trace(frame, event, arg):
+    print("%s, %s:%d" % (event, frame.f_code.co_filename, frame.f_lineno))
+    return trace
+
+# sys.settrace(trace)
+#
+# resource.setrlimit(resource.RLIMIT_STACK, (2**29,-1))
+sys.setrecursionlimit(10**6)
 
 with open("example_programs/loop.atp++", "r") as file:
     start = time()

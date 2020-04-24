@@ -3,24 +3,4 @@ SET myvars
 SET val1 100
 SET val2 50
 ADD myvars val1 val2
-
-DECL .negativeAdd
-ADD myvars -5
-SUB myvars -5
-
-ADD myvars 20 80
-SUB myvars 80 20
-MUL myvars 5 2
-
-SET mod1
-SET mod2 50
-
-MOD mod1 10 5
-MOD mod2 45
-INC mod1
-DEC mod1
-JNE .exit mod1
-
-ADD myvars 1000
-
-DECL .exit
+ADD val1 20

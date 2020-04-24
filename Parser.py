@@ -41,6 +41,18 @@ def checkVariable(program_state: ProgramState, key: str, parameters: dict) -> Un
     else:
         return ps, var
 
+def checkPrintParameters(program_state: ProgramState, parameters: dict):
+    ps = copy.copy(program_state)
+    if parameters["right"] not in ps.variables.keys():
+        if parameters["right"][0] == '"' and parameters["right"][-1] == '"':
+            right = parameters["right"]
+        else:
+            right = checkVariable(ps, "right", parameters)
+    else:
+        right = ps.variables[parameters["right"]]
+    return ps, right
+
+
 
 def checkFuncArguments(program_state: ProgramState, parameters: dict, instruction: str):
     ps = copy.copy(program_state)
@@ -212,39 +224,52 @@ def jump_greater_or_equal(program_state, parameters):
     return ps
 
 
+
+
+def ATPPrint(program_state, parameters):
+    ps = copy.copy(program_state)
+    ps, right = checkPrintParameters(ps, parameters)
+    if right is None:
+        ps.errors.append("Incorrect parameter for PRINT on line {0}".format(program_state.current_pos))
+        return ps
+    print("> {}".format(right))
+    return ps
+
+
 def run(program_state: ProgramState):
     ps = copy.copy(program_state)
+    # while True:
     if ps.current_pos == len(ps.instructions) - 1:
         return ps
     ps.current_pos += 1
     current_token, current_parameters = ps.instructions[ps.current_pos]
     if current_token == Lexer.SetSimple or current_token == Lexer.Set:
         ps = setVariable(ps, current_parameters)
-    if current_token == Lexer.Increment:
+    elif current_token == Lexer.Increment:
         ps = incrementVariable(ps, current_parameters)
-    if current_token == Lexer.Decrement:
+    elif current_token == Lexer.Decrement:
         ps = decrementVariable(ps, current_parameters)
-    if current_token == Lexer.AddSimple or current_token == Lexer.Add:
+    elif current_token == Lexer.AddSimple or current_token == Lexer.Add:
         ps = addToVariable(ps, current_parameters)
-    if current_token == Lexer.SubtractSimple or current_token == Lexer.Subtract:
+    elif current_token == Lexer.SubtractSimple or current_token == Lexer.Subtract:
         ps = subtractFromVariable(ps, current_parameters)
-    if current_token == Lexer.MultiplySimple or current_token == Lexer.Multiply:
+    elif current_token == Lexer.MultiplySimple or current_token == Lexer.Multiply:
         ps = multiplyByVariable(ps, current_parameters)
-    if current_token == Lexer.DivideSimple or current_token == Lexer.Divide:
+    elif current_token == Lexer.DivideSimple or current_token == Lexer.Divide:
         ps = divideByVariable(ps, current_parameters)
-    if current_token == Lexer.ModuloSimple or current_token == Lexer.Modulo:
+    elif current_token == Lexer.ModuloSimple or current_token == Lexer.Modulo:
         ps = modulo(ps, current_parameters)
-    if current_token == Lexer.JumpEqualSimple or current_token == Lexer.JumpEqual:
+    elif current_token == Lexer.JumpEqualSimple or current_token == Lexer.JumpEqual:
         ps = jump_equal(ps, current_parameters)
-    if current_token == Lexer.JumpNotEqualSimple or current_token == Lexer.JumpNotEqual:
+    elif current_token == Lexer.JumpNotEqualSimple or current_token == Lexer.JumpNotEqual:
         ps = jump_not_equal(ps, current_parameters)
-    if current_token == Lexer.JumpLessThanSimple or current_token == Lexer.JumpLessThan:
+    elif current_token == Lexer.JumpLessThanSimple or current_token == Lexer.JumpLessThan:
         ps = jump_less_than(ps, current_parameters)
-    if current_token == Lexer.JumpGreaterThanSimple or current_token == Lexer.JumpGreaterThan:
+    elif current_token == Lexer.JumpGreaterThanSimple or current_token == Lexer.JumpGreaterThan:
         ps = jump_greater_than(ps, current_parameters)
-    if current_token == Lexer.JumpLessOrEqualSimple or current_token == Lexer.JumpLessOrEqual:
+    elif current_token == Lexer.JumpLessOrEqualSimple or current_token == Lexer.JumpLessOrEqual:
         ps = jump_less_or_equal(ps, current_parameters)
-    if current_token == Lexer.JumpGreaterOrEqualSimple or current_token == Lexer.JumpGreaterOrEqual:
+    elif current_token == Lexer.JumpGreaterOrEqualSimple or current_token == Lexer.JumpGreaterOrEqual:
         ps = jump_greater_or_equal(ps, current_parameters)
     if len(ps.errors) > 0:
         return ps
@@ -258,3 +283,47 @@ def parseLabels(tokens: List[Tuple[Lexer.Instruction, dict]], counter: int = 0) 
         return dict(**{tokens[0][1]["label"]: counter}, **parseLabels(tokens[1:], counter + 1))
     else:
         return parseLabels(tokens[1:], counter + 1)
+
+
+
+
+def runv2(program_state: ProgramState):
+    ps = copy.copy(program_state)
+    # while True:
+    if ps.current_pos == len(ps.instructions) - 1:
+        return ps
+    ps.current_pos += 1
+    current_token, current_parameters = ps.instructions[ps.current_pos]
+    if current_token == Lexer.SetSimple or current_token == Lexer.Set:
+        ps = setVariable(ps, current_parameters)
+    elif current_token == Lexer.Increment:
+        ps = incrementVariable(ps, current_parameters)
+    elif current_token == Lexer.Decrement:
+        ps = decrementVariable(ps, current_parameters)
+    elif current_token == Lexer.AddSimple or current_token == Lexer.Add:
+        ps = addToVariable(ps, current_parameters)
+    elif current_token == Lexer.SubtractSimple or current_token == Lexer.Subtract:
+        ps = subtractFromVariable(ps, current_parameters)
+    elif current_token == Lexer.MultiplySimple or current_token == Lexer.Multiply:
+        ps = multiplyByVariable(ps, current_parameters)
+    elif current_token == Lexer.DivideSimple or current_token == Lexer.Divide:
+        ps = divideByVariable(ps, current_parameters)
+    elif current_token == Lexer.ModuloSimple or current_token == Lexer.Modulo:
+        ps = modulo(ps, current_parameters)
+    elif current_token == Lexer.JumpEqualSimple or current_token == Lexer.JumpEqual:
+        ps = jump_equal(ps, current_parameters)
+    elif current_token == Lexer.JumpNotEqualSimple or current_token == Lexer.JumpNotEqual:
+        ps = jump_not_equal(ps, current_parameters)
+    elif current_token == Lexer.JumpLessThanSimple or current_token == Lexer.JumpLessThan:
+        ps = jump_less_than(ps, current_parameters)
+    elif current_token == Lexer.JumpGreaterThanSimple or current_token == Lexer.JumpGreaterThan:
+        ps = jump_greater_than(ps, current_parameters)
+    elif current_token == Lexer.JumpLessOrEqualSimple or current_token == Lexer.JumpLessOrEqual:
+        ps = jump_less_or_equal(ps, current_parameters)
+    elif current_token == Lexer.JumpGreaterOrEqualSimple or current_token == Lexer.JumpGreaterOrEqual:
+        ps = jump_greater_or_equal(ps, current_parameters)
+    elif current_token == Lexer.Print:
+        ps = ATPPrint(ps, current_parameters)
+    if len(ps.errors) > 0:
+        return ps
+    return ps

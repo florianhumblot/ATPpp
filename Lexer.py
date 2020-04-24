@@ -11,6 +11,7 @@ class RegexMap(Enum):
     WHITESPACE = "\s+"  # One or more whitespace characters
     VAR_OR_CONST = "(" + str(VAR) + "|" + str(VAL) + ")"  # Combines the VAR and VAL regexes, matching either one.
     LABEL = "\.[a-zA-Z]+"  # Starts with a dot, followed by one or more letters
+    VAR_CONST_OR_STRING = "(" + str(VAR) + "|" + str(VAL) + "|\"[\w\s\?\.\!\,]*\")"
 
 
 class Instruction:
@@ -375,6 +376,18 @@ class Nop(Instruction):
         return "NOP"
 
 
+class Print(Instruction):
+    regex = "^PRINT (?P<right>" + str(RegexMap.VAR_CONST_OR_STRING.value) + ")$"
+
+    def __init__(self):
+        super().__init__()
+        super().__init__()
+        self.parameters = ["right"]
+
+    def __str__(self):
+        return "PRINT {value}"
+
+
 # strToList :: str -> [str]
 def strToList(input_string: str) -> List[str]:
     if input_string.find(' ') == -1:
@@ -428,7 +441,7 @@ def matchToken(input_string: str) -> Union[Tuple[Instruction, dict], None]:
         JumpGreaterThan, JumpGreaterThanSimple,
         JumpGreaterOrEqual, JumpGreaterOrEqualSimple,
         JumpLessOrEqual, JumpLessOrEqualSimple,
-        Nop,
+        Nop, Print
     ]
     return reduce(
         lambda x, y: x if x[1] is not None else y,
