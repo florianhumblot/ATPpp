@@ -367,7 +367,7 @@ class JumpLessOrEqual(Jump):
 
 
 class Nop(Instruction):
-    regex = "^(NOP|$|[ \t]*| *$)$"
+    regex = "^(NOP|$|[ \t]*| *$)[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
