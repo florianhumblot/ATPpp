@@ -35,7 +35,7 @@ class run:
             print("finished")
             print(program_state)
             return program_state
-        return self.run_program(Parser.runv2(program_state))
+        return self.run_program(Parser.runProgram(program_state))
 
 
 # print(Lexer.JumpGreaterOrEqual.regex)

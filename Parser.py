@@ -240,46 +240,6 @@ def ATPPrint(ps, parameters):
     print("> {}".format(right))
     return ps
 
-
-@ATPTools.copyParameters
-def run(ps: ProgramState):
-    if ps.current_pos == len(ps.instructions) - 1:
-        return ps
-    ps.current_pos += 1
-    current_token, current_parameters = ps.instructions[ps.current_pos]
-    if current_token == Lexer.SetSimple or current_token == Lexer.Set:
-        ps = setVariable(ps, current_parameters)
-    elif current_token == Lexer.Increment:
-        ps = incrementVariable(ps, current_parameters)
-    elif current_token == Lexer.Decrement:
-        ps = decrementVariable(ps, current_parameters)
-    elif current_token == Lexer.AddSimple or current_token == Lexer.Add:
-        ps = addToVariable(ps, current_parameters)
-    elif current_token == Lexer.SubtractSimple or current_token == Lexer.Subtract:
-        ps = subtractFromVariable(ps, current_parameters)
-    elif current_token == Lexer.MultiplySimple or current_token == Lexer.Multiply:
-        ps = multiplyByVariable(ps, current_parameters)
-    elif current_token == Lexer.DivideSimple or current_token == Lexer.Divide:
-        ps = divideByVariable(ps, current_parameters)
-    elif current_token == Lexer.ModuloSimple or current_token == Lexer.Modulo:
-        ps = modulo(ps, current_parameters)
-    elif current_token == Lexer.JumpEqualSimple or current_token == Lexer.JumpEqual:
-        ps = jump_equal(ps, current_parameters)
-    elif current_token == Lexer.JumpNotEqualSimple or current_token == Lexer.JumpNotEqual:
-        ps = jump_not_equal(ps, current_parameters)
-    elif current_token == Lexer.JumpLessThanSimple or current_token == Lexer.JumpLessThan:
-        ps = jump_less_than(ps, current_parameters)
-    elif current_token == Lexer.JumpGreaterThanSimple or current_token == Lexer.JumpGreaterThan:
-        ps = jump_greater_than(ps, current_parameters)
-    elif current_token == Lexer.JumpLessOrEqualSimple or current_token == Lexer.JumpLessOrEqual:
-        ps = jump_less_or_equal(ps, current_parameters)
-    elif current_token == Lexer.JumpGreaterOrEqualSimple or current_token == Lexer.JumpGreaterOrEqual:
-        ps = jump_greater_or_equal(ps, current_parameters)
-    if len(ps.errors) > 0:
-        return ps
-    return run(ps)
-
-
 @ATPTools.copyParameters
 def parseLabels(tokens: List[Tuple[Lexer.Instruction, dict]], counter: int = 0) -> dict:
     if len(tokens) == 0:
@@ -291,7 +251,7 @@ def parseLabels(tokens: List[Tuple[Lexer.Instruction, dict]], counter: int = 0) 
 
 
 @ATPTools.copyParameters
-def runv2(ps: ProgramState):
+def runProgram(ps: ProgramState):
     if ps.current_pos == len(ps.instructions) - 1:
         return ps
     ps.current_pos += 1

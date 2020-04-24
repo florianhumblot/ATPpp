@@ -4,3 +4,5 @@ SET b
 SET b a
 PRINT a
 PRINT b
+# this a test
+DECL .test
