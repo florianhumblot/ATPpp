@@ -1,6 +1,7 @@
 from typing import List, Union, Tuple
 import Lexer
 import copy
+import ATPTools
 
 
 class ProgramState:
@@ -19,18 +20,22 @@ class ProgramState:
             err=self.errors, line=self.current_pos)
 
 
-def setVariable(program_state: ProgramState, parameters: dict):
-    ps = copy.copy(program_state)
-    if "target" not in parameters.keys() or parameters["target"] in ("", None):
-        ps.errors.append("SET expects a name to declare on line {0}".format(ps.current_pos))
+@ATPTools.copyParameters
+def setVariable(ps: ProgramState, parameters: dict):
+    if "right" in parameters.keys():
+        ps, right = checkVariable(ps, "right", parameters)
     else:
-        ps.variables[parameters["target"]] = parameters["right"] if "right" in parameters.keys() else 0
+        right = 0
+    if type(right) == str:
+        ps.variables[parameters["target"]] = right
+    else:
+        ps.variables[parameters["target"]] = right
     return ps
 
 
-def checkVariable(program_state: ProgramState, key: str, parameters: dict) -> Union[
+@ATPTools.copyParameters
+def checkVariable(ps: ProgramState, key: str, parameters: dict) -> Union[
     Tuple[ProgramState, Union[str, float, int, None]], ProgramState]:
-    ps = copy.copy(program_state)
     var = parameters[key]
     if type(var) == str:
         if var in ps.variables.keys():
@@ -41,8 +46,9 @@ def checkVariable(program_state: ProgramState, key: str, parameters: dict) -> Un
     else:
         return ps, var
 
-def checkPrintParameters(program_state: ProgramState, parameters: dict):
-    ps = copy.copy(program_state)
+
+@ATPTools.copyParameters
+def checkPrintParameters(ps: ProgramState, parameters: dict):
     if parameters["right"] not in ps.variables.keys():
         if parameters["right"][0] == '"' and parameters["right"][-1] == '"':
             right = parameters["right"]
@@ -53,14 +59,16 @@ def checkPrintParameters(program_state: ProgramState, parameters: dict):
     return ps, right
 
 
-
-def checkFuncArguments(program_state: ProgramState, parameters: dict, instruction: str):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def checkFuncArguments(ps: ProgramState, parameters: dict, instruction: str):
     if "target" not in parameters.keys() or parameters["target"] in ("", None):
-        ps.errors.append("{1} expects a name to add to on line {0}".format(ps.current_pos, instruction))
+        ps.errors.append("{1} expects a name on line {0}".format(ps.current_pos, instruction))
         return ps, None, None
     if parameters["target"] not in ps.variables.keys():
-        ps.errors.append("Unknown variable {0} on line {1}".format(parameters["target"], instruction))
+        print("parameters")
+        ps.errors.append(
+            "Unknown variable {0} on line {1} for instruction {2}".format(parameters["target"], ps.current_pos,
+                                                                          instruction))
         return ps, None, None
     if len(parameters) >= 2:
         ps, right = checkVariable(ps, "right", parameters)
@@ -75,8 +83,8 @@ def checkFuncArguments(program_state: ProgramState, parameters: dict, instructio
     return ps, None, None
 
 
-def checkJumpArguments(program_state: ProgramState, parameters, instruction: str):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def checkJumpArguments(ps: ProgramState, parameters, instruction: str):
     if "target" not in parameters.keys() or parameters["target"] in ("", None):
         ps.errors.append("{1} expects a label on line {0}".format(ps.current_pos, instruction))
         return ps, None, None
@@ -96,24 +104,24 @@ def checkJumpArguments(program_state: ProgramState, parameters, instruction: str
     return ps, None, None
 
 
-def incrementVariable(program_state, parameters):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def incrementVariable(ps, parameters):
     if "target" not in parameters.keys():
         ps.errors.append("target must be specified for increment on line {0}".format(ps.current_pos))
     ps.variables[parameters["target"]] = ps.variables[parameters["target"]] + 1
     return ps
 
 
-def decrementVariable(program_state, parameters):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def decrementVariable(ps, parameters):
     if "target" not in parameters.keys():
         ps.errors.append("target must be specified for decrement on line {0}".format(ps.current_pos))
     ps.variables[parameters["target"]] = ps.variables[parameters["target"]] - 1
     return ps
 
 
-def addToVariable(program_state: ProgramState, parameters: dict):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def addToVariable(ps: ProgramState, parameters: dict):
     ps, left, right = checkFuncArguments(ps, parameters, "ADD")
     if left is None or right is None:
         return ps
@@ -121,9 +129,8 @@ def addToVariable(program_state: ProgramState, parameters: dict):
     return ps
 
 
-def subtractFromVariable(program_state, parameters):
-    ps = copy.copy(program_state)
-
+@ATPTools.copyParameters
+def subtractFromVariable(ps, parameters):
     ps, left, right = checkFuncArguments(ps, parameters, "SUB")
     if left is None or right is None:
         return ps
@@ -131,8 +138,8 @@ def subtractFromVariable(program_state, parameters):
     return ps
 
 
-def multiplyByVariable(program_state, parameters):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def multiplyByVariable(ps, parameters):
     ps, left, right = checkFuncArguments(ps, parameters, "MUL")
     if left is None or right is None:
         return ps
@@ -140,8 +147,8 @@ def multiplyByVariable(program_state, parameters):
     return ps
 
 
-def divideByVariable(program_state, parameters):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def divideByVariable(ps, parameters):
     ps, left, right = checkFuncArguments(ps, parameters, "DIV")
     if left is None or right is None:
         return ps
@@ -152,8 +159,8 @@ def divideByVariable(program_state, parameters):
     return ps
 
 
-def modulo(program_state, parameters):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def modulo(ps, parameters):
     ps, left, right = checkFuncArguments(ps, parameters, "DIV")
     if left is None or right is None:
         return ps
@@ -164,8 +171,8 @@ def modulo(program_state, parameters):
     return ps
 
 
-def jump_equal(program_state, parameters):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def jump_equal(ps, parameters):
     ps, left, right = checkJumpArguments(ps, parameters, "JE")
     if left is None or right is None:
         return ps
@@ -174,8 +181,8 @@ def jump_equal(program_state, parameters):
     return ps
 
 
-def jump_not_equal(program_state, parameters):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def jump_not_equal(ps, parameters):
     ps, left, right = checkJumpArguments(ps, parameters, "JNE")
     if left is None or right is None:
         return ps
@@ -184,8 +191,8 @@ def jump_not_equal(program_state, parameters):
     return ps
 
 
-def jump_less_than(program_state, parameters):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def jump_less_than(ps, parameters):
     ps, left, right = checkJumpArguments(ps, parameters, "JL")
     if left is None or right is None:
         return ps
@@ -194,8 +201,8 @@ def jump_less_than(program_state, parameters):
     return ps
 
 
-def jump_greater_than(program_state, parameters):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def jump_greater_than(ps, parameters):
     ps, left, right = checkJumpArguments(ps, parameters, "JG")
     if left is None or right is None:
         return ps
@@ -204,8 +211,8 @@ def jump_greater_than(program_state, parameters):
     return ps
 
 
-def jump_less_or_equal(program_state, parameters):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def jump_less_or_equal(ps, parameters):
     ps, left, right = checkJumpArguments(ps, parameters, "JLE")
     if left is None or right is None:
         return ps
@@ -214,8 +221,8 @@ def jump_less_or_equal(program_state, parameters):
     return ps
 
 
-def jump_greater_or_equal(program_state, parameters):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def jump_greater_or_equal(ps, parameters):
     ps, left, right = checkJumpArguments(ps, parameters, "JGE")
     if left is None or right is None:
         return ps
@@ -224,21 +231,18 @@ def jump_greater_or_equal(program_state, parameters):
     return ps
 
 
-
-
-def ATPPrint(program_state, parameters):
-    ps = copy.copy(program_state)
+@ATPTools.copyParameters
+def ATPPrint(ps, parameters):
     ps, right = checkPrintParameters(ps, parameters)
     if right is None:
-        ps.errors.append("Incorrect parameter for PRINT on line {0}".format(program_state.current_pos))
+        ps.errors.append("Incorrect parameter for PRINT on line {0}".format(ps.current_pos))
         return ps
     print("> {}".format(right))
     return ps
 
 
-def run(program_state: ProgramState):
-    ps = copy.copy(program_state)
-    # while True:
+@ATPTools.copyParameters
+def run(ps: ProgramState):
     if ps.current_pos == len(ps.instructions) - 1:
         return ps
     ps.current_pos += 1
@@ -276,6 +280,7 @@ def run(program_state: ProgramState):
     return run(ps)
 
 
+@ATPTools.copyParameters
 def parseLabels(tokens: List[Tuple[Lexer.Instruction, dict]], counter: int = 0) -> dict:
     if len(tokens) == 0:
         return {}
@@ -285,11 +290,8 @@ def parseLabels(tokens: List[Tuple[Lexer.Instruction, dict]], counter: int = 0) 
         return parseLabels(tokens[1:], counter + 1)
 
 
-
-
-def runv2(program_state: ProgramState):
-    ps = copy.copy(program_state)
-    # while True:
+@ATPTools.copyParameters
+def runv2(ps: ProgramState):
     if ps.current_pos == len(ps.instructions) - 1:
         return ps
     ps.current_pos += 1

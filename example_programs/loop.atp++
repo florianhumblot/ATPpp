@@ -1,9 +1,6 @@
 DECL .main
-SET i 1
-DECL .loop
-INC i
-JE .end i 160000
-JNE .loop i
-DECL .end
-PRINT i
-PRINT "This is a tests, watch me use punctuation! lalala.w"
+SET a 10
+SET b
+SET b a
+PRINT a
+PRINT b

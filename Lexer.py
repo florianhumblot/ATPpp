@@ -2,7 +2,7 @@ from enum import Enum
 from functools import reduce
 from typing import List, Union, Tuple
 import re
-import ast
+import ATPTools
 
 
 class RegexMap(Enum):
@@ -10,8 +10,9 @@ class RegexMap(Enum):
     VAL = "([-+]?)(\d*)(\.?\d*)"  # optional sign, followed by any amount of numbers, optionally a floating point number
     WHITESPACE = "\s+"  # One or more whitespace characters
     VAR_OR_CONST = "(" + str(VAR) + "|" + str(VAL) + ")"  # Combines the VAR and VAL regexes, matching either one.
-    LABEL = "\.[a-zA-Z]+"  # Starts with a dot, followed by one or more letters
+    LABEL = "\.[a-zA-Z0-9]+"  # Starts with a dot, followed by one or more letters
     VAR_CONST_OR_STRING = "(" + str(VAR) + "|" + str(VAL) + "|\"[\w\s\?\.\!\,]*\")"
+    COMMENT = "(\#{1}[\w\d\s\?\.\,\(\)\-\+\!]*)?"
 
 
 class Instruction:
@@ -35,7 +36,7 @@ class Jump(Instruction):
 
 
 class SetSimple(Instruction):
-    regex = "^SET (?P<target>" + str(RegexMap.VAR.value) + ")$"
+    regex = "^SET[ \t]+(?P<target>" + str(RegexMap.VAR.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -46,8 +47,8 @@ class SetSimple(Instruction):
 
 
 class Set(Instruction):
-    regex = "^SET (?P<target>" + str(RegexMap.VAR.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^SET[ \t]+(?P<target>" + str(RegexMap.VAR.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -58,7 +59,7 @@ class Set(Instruction):
 
 
 class Declare(Instruction):
-    regex = "^DECL (?P<label>\." + str(RegexMap.VAR.value) + ")$"
+    regex = "^DECL[ \t]+(?P<label>\." + str(RegexMap.VAR.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -69,7 +70,7 @@ class Declare(Instruction):
 
 
 class Increment(Instruction):
-    regex = "^INC (?P<target>" + str(RegexMap.VAR.value) + ")$"
+    regex = "^INC[ \t]+(?P<target>" + str(RegexMap.VAR.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -80,7 +81,7 @@ class Increment(Instruction):
 
 
 class Decrement(Instruction):
-    regex = "^DEC (?P<target>" + str(RegexMap.VAR.value) + ")$"
+    regex = "^DEC[ \t]+(?P<target>" + str(RegexMap.VAR.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -91,8 +92,8 @@ class Decrement(Instruction):
 
 
 class AddSimple(Instruction):
-    regex = "^ADD (?P<target>" + str(RegexMap.VAR.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^ADD[ \t]+(?P<target>" + str(RegexMap.VAR.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -103,9 +104,9 @@ class AddSimple(Instruction):
 
 
 class Add(Instruction):
-    regex = "^ADD (?P<target>" + str(RegexMap.VAR.value) + ") (?P<left>" + str(
-        RegexMap.VAR_OR_CONST.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^ADD[ \t]+(?P<target>" + str(RegexMap.VAR.value) + ")[ \t]+(?P<left>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -116,8 +117,8 @@ class Add(Instruction):
 
 
 class SubtractSimple(Instruction):
-    regex = "^SUB (?P<target>" + str(RegexMap.VAR.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^SUB[ \t]+(?P<target>" + str(RegexMap.VAR.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -128,9 +129,9 @@ class SubtractSimple(Instruction):
 
 
 class Subtract(Instruction):
-    regex = "^SUB (?P<target>" + str(RegexMap.VAR.value) + ") (?P<left>" + str(
-        RegexMap.VAR_OR_CONST.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^SUB[ \t]+(?P<target>" + str(RegexMap.VAR.value) + ")[ \t]+(?P<left>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -141,8 +142,8 @@ class Subtract(Instruction):
 
 
 class MultiplySimple(Instruction):
-    regex = "^MUL (?P<target>" + str(RegexMap.VAR.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^MUL[ \t]+(?P<target>" + str(RegexMap.VAR.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -153,9 +154,9 @@ class MultiplySimple(Instruction):
 
 
 class Multiply(Instruction):
-    regex = "^MUL (?P<target>" + str(RegexMap.VAR.value) + ") (?P<left>" + str(
-        RegexMap.VAR_OR_CONST.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^MUL[ \t]+(?P<target>" + str(RegexMap.VAR.value) + ")[ \t]+(?P<left>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -166,8 +167,8 @@ class Multiply(Instruction):
 
 
 class DivideSimple(Instruction):
-    regex = "^DIV (?P<target>" + str(RegexMap.VAR.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^DIV[ \t]+(?P<target>" + str(RegexMap.VAR.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -178,9 +179,9 @@ class DivideSimple(Instruction):
 
 
 class Divide(Instruction):
-    regex = "^DIV (?P<target>" + str(RegexMap.VAR.value) + ") (?P<left>" + str(
-        RegexMap.VAR_OR_CONST.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^DIV[ \t]+(?P<target>" + str(RegexMap.VAR.value) + ")[ \t]+(?P<left>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -191,8 +192,8 @@ class Divide(Instruction):
 
 
 class ModuloSimple(Instruction):
-    regex = "^MOD (?P<target>" + str(RegexMap.VAR.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^MOD[ \t]+(?P<target>" + str(RegexMap.VAR.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -203,9 +204,9 @@ class ModuloSimple(Instruction):
 
 
 class Modulo(Instruction):
-    regex = "^MOD (?P<target>" + str(RegexMap.VAR.value) + ") (?P<left>" + str(
-        RegexMap.VAR_OR_CONST.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^MOD[ \t]+(?P<target>" + str(RegexMap.VAR.value) + ")[ \t]+(?P<left>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -216,8 +217,8 @@ class Modulo(Instruction):
 
 
 class JumpEqualSimple(Jump):
-    regex = "^JE (?P<target>" + str(RegexMap.LABEL.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^JE[ \t]+(?P<target>" + str(RegexMap.LABEL.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -228,9 +229,9 @@ class JumpEqualSimple(Jump):
 
 
 class JumpEqual(Jump):
-    regex = "^JE (?P<target>" + str(RegexMap.LABEL.value) + ") (?P<left>" + str(
-        RegexMap.VAR_OR_CONST.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^JE[ \t]+(?P<target>" + str(RegexMap.LABEL.value) + ")[ \t]+(?P<left>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*(" + str(RegexMap.COMMENT.value) + "[ \t]*)$"
 
     def __init__(self):
         super().__init__()
@@ -241,8 +242,8 @@ class JumpEqual(Jump):
 
 
 class JumpNotEqualSimple(Jump):
-    regex = "^JNE (?P<target>" + str(RegexMap.LABEL.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^JNE[ \t]+(?P<target>" + str(RegexMap.LABEL.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -253,9 +254,9 @@ class JumpNotEqualSimple(Jump):
 
 
 class JumpNotEqual(Jump):
-    regex = "^JNE (?P<target>" + str(RegexMap.LABEL.value) + ") (?P<left>" + str(
-        RegexMap.VAR_OR_CONST.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^JNE[ \t]+(?P<target>" + str(RegexMap.LABEL.value) + ")[ \t]+(?P<left>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -266,8 +267,8 @@ class JumpNotEqual(Jump):
 
 
 class JumpLessThanSimple(Jump):
-    regex = "^JL (?P<target>" + str(RegexMap.LABEL.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^JL[ \t]+(?P<target>" + str(RegexMap.LABEL.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -278,9 +279,9 @@ class JumpLessThanSimple(Jump):
 
 
 class JumpLessThan(Jump):
-    regex = "^JL (?P<target>" + str(RegexMap.LABEL.value) + ") (?P<left>" + str(
-        RegexMap.VAR_OR_CONST.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^JL[ \t]+(?P<target>" + str(RegexMap.LABEL.value) + ")[ \t]+(?P<left>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -291,8 +292,8 @@ class JumpLessThan(Jump):
 
 
 class JumpGreaterThanSimple(Jump):
-    regex = "^JG (?P<target>" + str(RegexMap.LABEL.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^JG[ \t]+(?P<target>" + str(RegexMap.LABEL.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -303,9 +304,9 @@ class JumpGreaterThanSimple(Jump):
 
 
 class JumpGreaterThan(Jump):
-    regex = "^JG (?P<target>" + str(RegexMap.LABEL.value) + ") (?P<left>" + str(
-        RegexMap.VAR_OR_CONST.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^JG[ \t]+(?P<target>" + str(RegexMap.LABEL.value) + ")[ \t]+(?P<left>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -316,8 +317,8 @@ class JumpGreaterThan(Jump):
 
 
 class JumpGreaterOrEqualSimple(Jump):
-    regex = "^JGE (?P<target>" + str(RegexMap.LABEL.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^JGE[ \t]+(?P<target>" + str(RegexMap.LABEL.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -328,9 +329,9 @@ class JumpGreaterOrEqualSimple(Jump):
 
 
 class JumpGreaterOrEqual(Jump):
-    regex = "^JGE (?P<target>" + str(RegexMap.LABEL.value) + ") (?P<left>" + str(
-        RegexMap.VAR_OR_CONST.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^JGE[ \t]+(?P<target>" + str(RegexMap.LABEL.value) + ")[ \t]+(?P<left>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -341,8 +342,8 @@ class JumpGreaterOrEqual(Jump):
 
 
 class JumpLessOrEqualSimple(Jump):
-    regex = "^JLE (?P<target>" + str(RegexMap.LABEL.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^JLE[ \t]+(?P<target>" + str(RegexMap.LABEL.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -353,9 +354,9 @@ class JumpLessOrEqualSimple(Jump):
 
 
 class JumpLessOrEqual(Jump):
-    regex = "^JLE (?P<target>" + str(RegexMap.LABEL.value) + ") (?P<left>" + str(
-        RegexMap.VAR_OR_CONST.value) + ") (?P<right>" + str(
-        RegexMap.VAR_OR_CONST.value) + ")$"
+    regex = "^JLE[ \t]+(?P<target>" + str(RegexMap.LABEL.value) + ")[ \t]+(?P<left>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]+(?P<right>" + str(
+        RegexMap.VAR_OR_CONST.value) + ")[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -377,7 +378,8 @@ class Nop(Instruction):
 
 
 class Print(Instruction):
-    regex = "^PRINT (?P<right>" + str(RegexMap.VAR_CONST_OR_STRING.value) + ")$"
+    regex = "^PRINT[ \t]+(?P<right>" + str(RegexMap.VAR_CONST_OR_STRING.value) + ")[ \t]*" + str(
+        RegexMap.COMMENT.value) + "[ \t]*$"
 
     def __init__(self):
         super().__init__()
@@ -389,6 +391,7 @@ class Print(Instruction):
 
 
 # strToList :: str -> [str]
+@ATPTools.copyParameters
 def strToList(input_string: str) -> List[str]:
     if input_string.find(' ') == -1:
         return [input_string]
@@ -396,23 +399,27 @@ def strToList(input_string: str) -> List[str]:
 
 
 # stringToLines :: str -> [str]
+@ATPTools.copyParameters
 def strToLines(input_string: str) -> List[str]:
     if input_string.find('\n') == -1:
         return [input_string]
     return [input_string[:input_string.index('\n')]] + strToLines(input_string[input_string.index('\n') + 1:])
 
 
+@ATPTools.copyParameters
 def mapDataTypes(input_dict: dict) -> dict:
     return dict(map(lambda kv: (kv[0], strToDataType(kv[1])), input_dict.items()))
 
 
 # regexTest :: Instruction str -> Either dict None
+@ATPTools.copyParameters
 def regexTest(instruction_type: Instruction, string: str) -> Union[dict, None]:
     pattern = re.compile(instruction_type.regex)
     match = re.fullmatch(pattern, string)
     return mapDataTypes(match.groupdict()) if match is not None else None
 
 
+@ATPTools.copyParameters
 def strToDataType(input_string: str) -> Union[str, float, int]:
     try:
         float(input_string)
@@ -426,21 +433,22 @@ def strToDataType(input_string: str) -> Union[str, float, int]:
 
 
 # matchToken :: str -> Either Tuple[Instruction, dict] None
+@ATPTools.copyParameters
 def matchToken(input_string: str) -> Union[Tuple[Instruction, dict], None]:
     instruction_map = [
-        Set, SetSimple,
+        SetSimple, Set,
         Declare, Increment, Decrement,
-        Add, AddSimple,
-        Subtract, SubtractSimple,
-        Multiply, MultiplySimple,
-        Divide, DivideSimple,
-        Modulo, ModuloSimple,
-        JumpEqual, JumpEqualSimple,
-        JumpNotEqual, JumpNotEqualSimple,
-        JumpLessThan, JumpLessThanSimple,
-        JumpGreaterThan, JumpGreaterThanSimple,
-        JumpGreaterOrEqual, JumpGreaterOrEqualSimple,
-        JumpLessOrEqual, JumpLessOrEqualSimple,
+        AddSimple, Add,
+        SubtractSimple, Subtract,
+        MultiplySimple, Multiply,
+        DivideSimple, Divide,
+        ModuloSimple, Modulo,
+        JumpEqualSimple, JumpEqual,
+        JumpNotEqualSimple, JumpNotEqual,
+        JumpLessThanSimple, JumpLessThan,
+        JumpGreaterThanSimple, JumpGreaterThan,
+        JumpGreaterOrEqualSimple, JumpGreaterOrEqual,
+        JumpLessOrEqualSimple, JumpLessOrEqual,
         Nop, Print
     ]
     return reduce(
@@ -453,6 +461,7 @@ def matchToken(input_string: str) -> Union[Tuple[Instruction, dict], None]:
 
 
 # lexInput :: [str] -> [Tokens]
+@ATPTools.copyParameters
 def lexInput(input_program: List[str]):
     if len(input_program) == 0:
         return []
