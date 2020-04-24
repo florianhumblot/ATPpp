@@ -419,6 +419,7 @@ def regexTest(instruction_type: Instruction, string: str) -> Union[dict, None]:
     match = re.fullmatch(pattern, string)
     return mapDataTypes(match.groupdict()) if match is not None else None
 
+
 # strToDataType :: str -> Either str float int
 @ATPTools.copyParameters
 def strToDataType(input_string: str) -> Union[str, float, int]:
@@ -461,7 +462,7 @@ def matchToken(input_string: str) -> Union[Tuple[Instruction, dict], None]:
     )
 
 
-# lexInput :: [str] -> [Tokens]
+# lexInput :: [str] -> [Tuple[Instruction, dict]]
 @ATPTools.copyParameters
 def lexInput(input_program: List[str]) -> List[Tuple[Instruction, dict]]:
     if len(input_program) == 0:
