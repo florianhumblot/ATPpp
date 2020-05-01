@@ -88,3 +88,11 @@ The table below describes the formats for the different tokens (variables, immed
 |Immediate value|Starts with an optional sign (`+/-`), followed by any number of numbers, optionally followed by a dot (`.`), optionally followed by any number of numbers |`1`<br>`20`<br>`+5`<br>`-10`<br>`1.5`<br>`-23.42`<br>`+35.104`|
 |String | Starts and ends with `"` and can contain any of the following characters: letters, numbers, spaces, and the following special characters: `.!,\/-+%#'@&^$~*()_{}[];:<>` | `"My string!"`<br>`"Hello World!"`<br>`"This is a test string 123.!@#$%^&(*)%^*){}{[][]"` |
 | Comments | Comments must start with exactly one `#` followed by any number of characters, including letters, numbers and the following special characters: `.!,\/-+%#'@&^$~*()_{}[];:<>` | `# This is a comment`<br>`# This is a comment 122340 !@#$%#$%^&*(`|
+
+The following restrictions apply to the language:
+ - Comments can be placed at the end of any line of code and on any blank line of code.
+ - String can __only__ be used with the `PRINT` function.
+ - Division and modulo by `0` will lead to an error and the interpreter stopping early.
+ - Calling functions/jumps on non-existent variables and/or labels will lead to an error and the interpreter stopping early.
+ - All simple-variants of functions will assume the left parameter to be `0` if no third argument is given except in the case of arithmetic functions, in which case it will use the current value of the target as the left operand.
+ - There is a system-dependent limit on the size of the program (iterations count as additional lines of code for the purposes of this limitation), this is due to stack limits imposed on us by the operating system.
