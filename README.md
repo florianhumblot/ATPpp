@@ -57,7 +57,7 @@ There are a few example programs that are ready to run, you can find all of them
 |  `MOD` |  Modulus of a variable with a given value/variable  | Y |  
 |  `JE` |  Jumps to specified label if variable/value is equal to given | Y |  
 |  `JNE` |  Jumps to specified label if variable/value is not equal to given variable/value | Y |  
-|  `JL` |  Jums to specified label if variable is less than given variable/value | Y |  
+|  `JL` |  Jumps to specified label if variable is less than given variable/value | Y |  
 |  `JG` |  Jumps to specified label if variable is greater than given variable/value | Y |  
 |  `JGE` |  Jumps to specified label if variable is greater than or equal to given variable/value | Y |  
 |  `JLE` |  Jumps to specified label if variable is less than or equal to given variable/value | Y |  

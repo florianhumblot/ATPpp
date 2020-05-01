@@ -31,7 +31,7 @@ def setVariable(ps: ProgramState, parameters: dict) -> ProgramState:
     """
     Sets a variable to the correct value in the program state
     :param ps: Current program state
-    :param parameters: paraameters for the operation
+    :param parameters: parameters for the operation
     :return: new program state after the transformation
     """
     if "right" in parameters.keys():
@@ -95,7 +95,7 @@ def checkFuncArguments(ps: ProgramState, parameters: dict, instruction: str) -> 
     left operand with the value of the target
     :param ps: current program state
     :param parameters: parameters for the function
-    :param instruction: which insrtuction is being checked for error messaging
+    :param instruction: which instruction is being checked for error messaging
     :return: ProgramState, Left (either float, int or none on error) and Right (either float, int or None on error)
     """
     if "target" not in parameters.keys() or parameters["target"] in ("", None):
@@ -129,7 +129,7 @@ def checkJumpArguments(ps: ProgramState, parameters, instruction: str) -> Tuple[
     they have their own check functions.
     :param ps: current program state
     :param parameters: parameters for the jump
-    :param instruction: which insrtuction for debug information
+    :param instruction: which instruction for debug information
     :return: program state, Left (either float, int or None on error), Right (either float, int or None on error)
     """
     if "target" not in parameters.keys() or parameters["target"] in ("", None):

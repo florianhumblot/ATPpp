@@ -1,19 +1,18 @@
+import argparse
 import os
 import sys
 import threading
 from functools import reduce
-from pprint import pprint
 from time import time
-import argparse
 
+import ATPTools
 import Lexer
 import Parser
-import ATPTools
 
 
 # parseProgram :: str -> Parser.ProgramState
 @ATPTools.copyParameters
-def parseProgram(infile: str = "example_programs/loop.atp++") ->Parser.ProgramState:
+def parseProgram(infile: str = "example_programs/loop.atp++") -> Parser.ProgramState:
     """
     Parses a program from a given input file.
     :param infile: str the path to a ATP++ file
@@ -25,7 +24,7 @@ def parseProgram(infile: str = "example_programs/loop.atp++") ->Parser.ProgramSt
         unknown_tokens = list(zip(map(lambda x: x[1] is None, tokens), program_text))
         unknown_count = reduce(lambda x, y: x + y, map(lambda x: int(x[0]), unknown_tokens))
         if unknown_count > 0:
-            list(map(lambda x: print("Unkown token `{0}` on line {1}".format(x[1][1], x[0])) if x[1][0] else None,
+            list(map(lambda x: print("Unknown token `{0}` on line {1}".format(x[1][1], x[0])) if x[1][0] else None,
                      enumerate(unknown_tokens)))
             exit(-1)
         ps = Parser.ProgramState()
@@ -38,6 +37,7 @@ class run:
     """
     Class for running our parser in a different thread to circumvent the stack limit on the python interpreter.
     """
+
     def __call__(self, infile: str = "example_programs/counter_machine.atp++"):
         """
         Runs the parser
@@ -79,6 +79,6 @@ if __name__ == '__main__':
     start_time = time()
     sys.setrecursionlimit(0x1000000)
     threading.stack_size(256000000)  # set stack to 256mb
-    t = threading.Thread(target=run(), kwargs={"infile":input_file})
+    t = threading.Thread(target=run(), kwargs={"infile": input_file})
     t.start()
     t.join()

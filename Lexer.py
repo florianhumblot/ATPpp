@@ -1,6 +1,6 @@
 from enum import Enum
 from functools import reduce
-from typing import List, Union, Tuple, Optional
+from typing import List, Union, Tuple
 import re
 import ATPTools
 
