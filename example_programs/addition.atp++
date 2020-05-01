@@ -4,6 +4,7 @@ SET val1 100
 SET val2 50
 ADD myvars val1 val2
 ADD val1 20
-PRINT val1          # print val1
 ADD val1 -5
 PRINT val1
+PRINT val2
+PRINT myvars
