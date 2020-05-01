@@ -1,4 +1,5 @@
 
+
   
 # ATP++  
 an assembly-lookalike language for the Advanced Technical Programming course.  
@@ -18,7 +19,10 @@ This simple language supports the following features:
 - Jumps  
    - using comparison operators  
    - labels  
-- Printing variables  
+- Printing
+   - variables
+   - strings
+   - immediate values
   
 This language implementation is Turing Complete, this is proven by a counter-machine implementation (which can be found at: [counter_machine.atp++](https://github.com/florianhumblot/ATPpp/blob/master/example_programs/counter_machine.atp++))  
   
@@ -96,3 +100,22 @@ The following restrictions apply to the language:
  - Calling functions/jumps on non-existent variables and/or labels will lead to an error and the interpreter stopping early.
  - All simple-variants of functions will assume the left parameter to be `0` if no third argument is given except in the case of arithmetic functions, in which case it will use the current value of the target as the left operand.
  - There is a system-dependent limit on the size of the program (iterations count as additional lines of code for the purposes of this limitation), this is due to stack limits imposed on us by the operating system.
+ - The fact that immediate values are allowed to use a sign (`+-`) means that your mathematics can have unexpected results!
+	 - i.e.: `ADD myvar 10 -5` will result in `myvar` having the value `5` because `(10) + (-5) = 5`
+	 - i.e.: `SUB myvar 5 -10` will result in `myvar` having the value `15` because `(5)-(-10) = 15` 
+
+## Extending the language
+
+Adding new commands / functions is quite easy. While this is not supported within the language itself (except by the use of labels, but we lack branching so they aren't quite functions) adding features to the core language can be done as follows:
+
+1. Add a class that is a subclass of `Instruction` (or `Jump`) to `Lexer.py`
+2. Add the regular expression that matches the pattern of your instruction to the class as a static member
+	- Tip: use named groups in your regular expression to easily get the right group in your function. 
+		- Named groups are created as follows: `r"(?P<my_named_group>\w+)"` 
+3. Add the name of your class to the `instruction_map` variable in the `matchToken` function in `Lexer.py` 
+4. Add a function that will execute your instruction to `Parser.py`.
+	- Make sure to use the `@ATPTools.copyParameters` decorator to get all your parameters by-value instead of by-reference
+	- Return the program state at the end of your function
+	- If anything causes your instruction to not be able to execute properly, append an error message to `program_state.errors`. The interpreter will stop the program execution as soon as this field is populated. 
+5. Add a case for your instruction to the if/elif chain to the `runProgram` function in `Parser.py` that executes the function you created in step 4
+6. Add your new instruction to the table above!
