@@ -18,7 +18,10 @@ This simple language supports the following features:
 - Jumps  
    - using comparison operators  
    - labels  
-- Printing variables  
+- Printing
+   - variables
+   - strings
+   - immediate values
   
 This language implementation is Turing Complete, this is proven by a counter-machine implementation (which can be found at: [counter_machine.atp++](https://github.com/florianhumblot/ATPpp/blob/master/example_programs/counter_machine.atp++))  
   
