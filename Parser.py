@@ -1,7 +1,7 @@
 from typing import List, Union, Tuple
-import Lexer
-import copy
+
 import ATPTools
+import Lexer
 
 
 class ProgramState:
@@ -13,11 +13,11 @@ class ProgramState:
         self.instructions = []
         self.labels = {}
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "ProgramState: [\n\tcurrent line: {line}\n\tvariables: {vars}\n\tlabels: {labels}\n\twarnings: {warn}\n\terrors: {err}\n]\n".format(
             vars=self.variables, labels=self.labels,
             warn=self.warnings,
-            err=self.errors, line=self.current_pos)
+            err=self.errors, line=self.current_pos + 1)
 
 
 # setVariable :: ProgramState -> dict -> ProgramState
@@ -262,6 +262,15 @@ def ATPPrint(ps: ProgramState, parameters: dict) -> ProgramState:
     return ps
 
 
+# ATPDump :: ProgramState -> ProgramState
+@ATPTools.copyParameters
+def ATPDump(ps: ProgramState, current_parameters: dict) -> ProgramState:
+    print("-------------DUMPING PROGRAM STATE-------------")
+    print(ps)
+    print("-----------END DUMPING PROGRAM STATE-----------")
+    return ps
+
+
 # parseLabels :: List[Tuple[Instruction, dict]] -> int -> dict
 @ATPTools.copyParameters
 def parseLabels(tokens: List[Tuple[Lexer.Instruction, dict]], counter: int = 0) -> dict:
@@ -273,7 +282,6 @@ def parseLabels(tokens: List[Tuple[Lexer.Instruction, dict]], counter: int = 0) 
         return parseLabels(tokens[1:], counter + 1)
 
 
-# runProgram :: ProgramState -> ProgramState
 @ATPTools.copyParameters
 def runProgram(ps: ProgramState) -> ProgramState:
     if ps.current_pos == len(ps.instructions) - 1:
@@ -310,6 +318,8 @@ def runProgram(ps: ProgramState) -> ProgramState:
         ps = jump_greater_or_equal(ps, current_parameters)
     elif current_token == Lexer.Print:
         ps = ATPPrint(ps, current_parameters)
+    elif current_token == Lexer.Dump:
+        ps = ATPDump(ps, current_parameters)
     if len(ps.errors) > 0:
         return ps
     return ps

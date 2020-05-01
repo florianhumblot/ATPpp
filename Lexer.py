@@ -11,7 +11,8 @@ class RegexMap(Enum):
     WHITESPACE = "\s+"  # One or more whitespace characters
     VAR_OR_CONST = "(" + str(VAR) + "|" + str(VAL) + ")"  # Combines the VAR and VAL regexes, matching either one.
     LABEL = "\.[a-zA-Z0-9]+"  # Starts with a dot, followed by one or more letters
-    VAR_CONST_OR_STRING = "(" + str(VAR) + "|" + str(VAL) + "|\"[\w\d\s\?\.\!\,\\\/\-\`\+\%\#\'\@\&\^\$\~\*\(\)\_\{\}\[\]\;\:\<\>]*\")"
+    VAR_CONST_OR_STRING = "(" + str(VAR) + "|" + str(
+        VAL) + "|\"[\w\d\s\?\.\!\,\\\/\-\`\+\%\#\'\@\&\^\$\~\*\(\)\_\{\}\[\]\;\:\<\>]*\")"
     COMMENT = "(\#{1}[\w\d\s\?\.\!\,\\\/\-\+\%\#\'\@\&\^\$\~\*\(\)\_\{\}\[\]\;\:\<\>\`]*)?"
 
 
@@ -377,6 +378,17 @@ class Nop(Instruction):
         return "NOP"
 
 
+class Dump(Instruction):
+    regex = "^(DUMP)[ \t]*" + str(RegexMap.COMMENT.value) + "[ \t]*$"
+
+    def __init__(self):
+        super().__init__()
+        self.parameters = []
+
+    def __str__(self) -> str:
+        return "DUMP"
+
+
 class Print(Instruction):
     regex = "^PRINT[ \t]+(?P<right>" + str(RegexMap.VAR_CONST_OR_STRING.value) + ")[ \t]*" + str(
         RegexMap.COMMENT.value) + "[ \t]*$"
@@ -451,7 +463,7 @@ def matchToken(input_string: str) -> Union[Tuple[Instruction, dict], None]:
         JumpGreaterThanSimple, JumpGreaterThan,
         JumpGreaterOrEqualSimple, JumpGreaterOrEqual,
         JumpLessOrEqualSimple, JumpLessOrEqual,
-        Nop, Print
+        Nop, Print, Dump
     ]
     return reduce(
         lambda x, y: x if x[1] is not None else y,
