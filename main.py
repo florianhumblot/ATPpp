@@ -11,7 +11,7 @@ import Parser
 import ATPTools
 
 
-# pparseProgram :: str -> Parser.ProgramState
+# parseProgram :: str -> Parser.ProgramState
 @ATPTools.copyParameters
 def parseProgram(infile: str = "example_programs/loop.atp++") ->Parser.ProgramState:
     """
