@@ -87,3 +87,4 @@ The table below describes the formats for the different tokens (variables, immed
 | variable | at least one letter followed by any number of letters and/or numbers| `var`<br>`var10`<br>`VAR`<br>`my10thVar`|
 |Immediate value|Starts with an optional sign (`+/-`), followed by any number of numbers, optionally followed by a dot (`.`), optionally followed by any number of numbers |`1`<br>`20`<br>`+5`<br>`-10`<br>`1.5`<br>`-23.42`<br>`+35.104`|
 |String | Starts and ends with `"` and can contain any of the following characters: letters, numbers, spaces, and the following special characters: `.!,\/-+%#'@&^$~*()_{}[];:<>` | `"My string!"`<br>`"Hello World!"`<br>`"This is a test string 123.!@#$%^&(*)%^*){}{[][]"` |
+| Comments | Comments must start with exactly one `#` followed by any number of characters, including letters, numbers and the following special characters: `.!,\/-+%#'@&^$~*()_{}[];:<>` | `# This is a comment`<br>`# This is a comment 122340 !@#$%#$%^&*(`|
