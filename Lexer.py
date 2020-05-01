@@ -436,6 +436,9 @@ def mapDataTypes(input_dict: dict) -> dict:
     :param input_dict: the parameters of the current line
     :return: the variables of the current line cast to their correct datatype
     """
+    # We casten het resultaat van de map functie naar een dict omdat het resultaat van map maar een keer gebruikt kan
+    # worden doordat het een generator teruggeeft. Door het in een dict te stoppen behouden we alle informatie en
+    # kan het resultaat meerdere keren gebruikt worden.
     return dict(map(lambda kv: (kv[0], strToDataType(kv[1])), input_dict.items()))
 
 

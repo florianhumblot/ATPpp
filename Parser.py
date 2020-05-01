@@ -413,6 +413,8 @@ def parseLabels(tokens: List[Tuple[Lexer.Instruction, dict]], counter: int = 0) 
     if len(tokens) == 0:
         return {}
     if tokens[0][0] == Lexer.Declare:
+        # Je kunt dicts niet samenvoegen, dus we maken een nieuwe dict aan met de vorige dict en de return waarde van
+        # de recursieve function-call
         return dict(**{tokens[0][1]["label"]: counter}, **parseLabels(tokens[1:], counter + 1))
     else:
         return parseLabels(tokens[1:], counter + 1)
