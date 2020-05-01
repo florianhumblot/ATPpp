@@ -11,8 +11,8 @@ class RegexMap(Enum):
     WHITESPACE = "\s+"  # One or more whitespace characters
     VAR_OR_CONST = "(" + str(VAR) + "|" + str(VAL) + ")"  # Combines the VAR and VAL regexes, matching either one.
     LABEL = "\.[a-zA-Z0-9]+"  # Starts with a dot, followed by one or more letters
-    VAR_CONST_OR_STRING = "(" + str(VAR) + "|" + str(VAL) + "|\"[\w\d\s\?\.\!\,\\\/\-\+\%\#\'\@\&\^\$\~\*\(\)\_\{\}\[\]\;\:\<\>]*\")"
-    COMMENT = "(\#{1}[\w\d\s\?\.\!\,\\\/\-\+\%\#\'\@\&\^\$\~\*\(\)\_\{\}\[\]\;\:\<\>]*)?"
+    VAR_CONST_OR_STRING = "(" + str(VAR) + "|" + str(VAL) + "|\"[\w\d\s\?\.\!\,\\\/\-\`\+\%\#\'\@\&\^\$\~\*\(\)\_\{\}\[\]\;\:\<\>]*\")"
+    COMMENT = "(\#{1}[\w\d\s\?\.\!\,\\\/\-\+\%\#\'\@\&\^\$\~\*\(\)\_\{\}\[\]\;\:\<\>\`]*)?"
 
 
 class Instruction:
