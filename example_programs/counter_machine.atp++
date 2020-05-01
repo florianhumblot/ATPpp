@@ -6,7 +6,7 @@ SET reg2 0          # set reg2 to 0
 SET reg3 0          # set reg3 to 0
 DECL .main          # entry point of the application
 ADD reg2 2          # Add 2 to reg2
-JE .halt reg0 0     # what
+JE .halt reg0 0     # End the program if register 2 is equal to 0
 DECL .l1            # label 1
 JE .l6 reg2 0       # if reg2 is 0, go to .l6
 DEC reg2            # reg2--
