@@ -1,0 +1,29 @@
+DECL .main                      # Entry point
+SET i 0                         # Set `i` to 0
+SET target 100                  # Set the target of the loop to 100
+DECL .loop                      # Loop entry
+INC i                           # Increment i
+JNE .fizzbuzztest i target      # if i is not 100 got to fizzbuzztest
+JE .halt i target               # if i is 100 got to halt
+DECL .fizzbuzztest              # Fizzbuzztest entry
+SET mod3                        # Declare variable for the result of the modulo 3 operation
+SET mod5                        # Declare variable for the result of the modulo 5 operation
+MOD mod3 i 3                    # Execute the i modulo 3 operation
+MOD mod5 i 5                    # Execute the i modulo 5 operation
+JE .fizz mod3                   # If i is divisible by 3, go to fizz
+JE .buzz mod5                   # If i is divisible by 5, and not divisible by 3 go to buzz
+JE .print 0                     # If i is not divisible by 3 or 5, go to print
+DECL .fizz                      # Fizz printer
+JE .fizzbuzz mod5               # If i was also divisible by 5, go to print FizzBuzz
+PRINT "Fizz"                    # print Fizz
+JE .loop 0                      # Go back to the loop
+DECL .buzz                      # Buzz printer
+PRINT "Buzz"                    # Print Buzz
+JE .loop 0                      # Go back to the loop
+DECL .fizzbuzz                  # Fizzbuzz printer
+PRINT "FizzBuzz"                # Print FizzBuzz
+JE .loop 0                      # Go back to the loop
+DECL .print                     # printer
+PRINT i                         # print i
+JE .loop 0                      # Go back to the loop
+DECL .halt                      # Halt the program
