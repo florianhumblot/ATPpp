@@ -1,0 +1,23 @@
+SET reg0 0          # set reg0 to 0
+SET reg1 0          # set reg1 to 0
+SET reg2 0          # set reg2 to 0
+SET reg3 0          # set reg3 to 0
+DECL .main          # entry point of the application
+ADD reg2 2          # Add 2 to reg2
+JE .halt reg0 0     # what
+DECL .l1            # label 1
+JE .l6 reg2 0       # if reg2 is 0, go to .l6
+DEC reg2            # reg2--
+INC reg3            # reg3++
+INC reg1            # reg1++
+JE .l1 reg0 0       # if reg0 is 0 (which it always is), go to .l1
+DECL .l6            # label 6
+JE .halt reg1 0     # if reg1 is 0, go to .halt
+DEC reg1            # reg1--
+INC reg2            # reg2++
+JE .l6 reg0 0       # if reg0 is 0 (which it always is), go to .
+DECL .halt          # label halt
+PRINT reg0          # print reg0
+PRINT reg1          # print reg1
+PRINT reg2          # print reg2
+PRINT reg3          # print reg3
