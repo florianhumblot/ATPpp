@@ -21,7 +21,7 @@ class Instruction:
     def __init__(self):
         self.parameters = []
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Instruction"
 
 
@@ -31,7 +31,7 @@ class Jump(Instruction):
     def __init__(self):
         super().__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Jump"
 
 
@@ -42,7 +42,7 @@ class SetSimple(Instruction):
         super().__init__()
         self.parameters = ["target"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "SET {target}"
 
 
@@ -54,7 +54,7 @@ class Set(Instruction):
         super().__init__()
         self.parameters = ["target", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "SET {target} {value}"
 
 
@@ -65,7 +65,7 @@ class Declare(Instruction):
         super().__init__()
         self.parameters = ["label"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "DECL {label}"
 
 
@@ -76,7 +76,7 @@ class Increment(Instruction):
         super().__init__()
         self.parameters = ["target"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "INC {target}"
 
 
@@ -87,7 +87,7 @@ class Decrement(Instruction):
         super().__init__()
         self.parameters = ["target"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "DEC {target}"
 
 
@@ -99,7 +99,7 @@ class AddSimple(Instruction):
         super().__init__()
         self.parameters = ["target", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "ADD {target} {var|value}"
 
 
@@ -112,7 +112,7 @@ class Add(Instruction):
         super().__init__()
         self.parameters = ["target", "left", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "ADD {target} {var|value} {var|value}"
 
 
@@ -124,7 +124,7 @@ class SubtractSimple(Instruction):
         super().__init__()
         self.parameters = ["target", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "SUB {target} {var|value}"
 
 
@@ -137,7 +137,7 @@ class Subtract(Instruction):
         super().__init__()
         self.parameters = ["target", "left", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "SUB {target} {var|value} {var|value}"
 
 
@@ -149,7 +149,7 @@ class MultiplySimple(Instruction):
         super().__init__()
         self.parameters = ["target", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "MUL {target} {var|value}"
 
 
@@ -162,7 +162,7 @@ class Multiply(Instruction):
         super().__init__()
         self.parameters = ["target", "left", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "MUL {target} {var|value} {var|value}"
 
 
@@ -174,7 +174,7 @@ class DivideSimple(Instruction):
         super().__init__()
         self.parameters = ["target", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "DIV {target} {var|value}"
 
 
@@ -187,7 +187,7 @@ class Divide(Instruction):
         super().__init__()
         self.parameters = ["target", "left", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "DIV {target} {left} {right}"
 
 
@@ -199,7 +199,7 @@ class ModuloSimple(Instruction):
         super().__init__()
         self.parameters = ["target", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "MOD {target} {right}"
 
 
@@ -212,7 +212,7 @@ class Modulo(Instruction):
         super().__init__()
         self.parameters = ["target", "left", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "MOD {target} {left} {right"
 
 
@@ -224,7 +224,7 @@ class JumpEqualSimple(Jump):
         super().__init__()
         self.parameters = ["target", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "JE {target} {right}"
 
 
@@ -237,7 +237,7 @@ class JumpEqual(Jump):
         super().__init__()
         self.parameters = ["target", "left", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{target} {right}"
 
 
@@ -249,7 +249,7 @@ class JumpNotEqualSimple(Jump):
         super().__init__()
         self.parameters = ["target", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "JNE {target} {left} {right}"
 
 
@@ -262,7 +262,7 @@ class JumpNotEqual(Jump):
         super().__init__()
         self.parameters = ["target", "left", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "JNE {target} {left} {right}"
 
 
@@ -274,7 +274,7 @@ class JumpLessThanSimple(Jump):
         super().__init__()
         self.parameters = ["target", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "JL {target} {right}"
 
 
@@ -287,7 +287,7 @@ class JumpLessThan(Jump):
         super().__init__()
         self.parameters = ["target", "left", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "JL {target} {left} {right}"
 
 
@@ -299,7 +299,7 @@ class JumpGreaterThanSimple(Jump):
         super().__init__()
         self.parameters = ["target", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "JG {target} {right}"
 
 
@@ -312,7 +312,7 @@ class JumpGreaterThan(Jump):
         super().__init__()
         self.parameters = ["target", "left", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "JG {target} {left} {right}"
 
 
@@ -324,7 +324,7 @@ class JumpGreaterOrEqualSimple(Jump):
         super().__init__()
         self.parameters = ["target", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "JGE {target} {right}"
 
 
@@ -337,7 +337,7 @@ class JumpGreaterOrEqual(Jump):
         super().__init__()
         self.parameters = ["target", "left", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "JGE {target} {left} {right}"
 
 
@@ -349,7 +349,7 @@ class JumpLessOrEqualSimple(Jump):
         super().__init__()
         self.parameters = ["target", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "JLE {target} {right}"
 
 
@@ -362,7 +362,7 @@ class JumpLessOrEqual(Jump):
         super().__init__()
         self.parameters = ["target", "left", "right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "JLE {target} {left} {right}"
 
 
@@ -373,7 +373,7 @@ class Nop(Instruction):
         super().__init__()
         self.parameters = []
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "NOP"
 
 
@@ -386,7 +386,7 @@ class Print(Instruction):
         super().__init__()
         self.parameters = ["right"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "PRINT {value}"
 
 
