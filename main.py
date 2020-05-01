@@ -1,13 +1,17 @@
+import os
 import sys
 import threading
 from functools import reduce
 from pprint import pprint
 from time import time
+import argparse
 
 import Lexer
 import Parser
 import ATPTools
 
+
+# pparseProgram :: str -> Parser.ProgramState
 @ATPTools.copyParameters
 def parseProgram(infile: str = "example_programs/loop.atp++"):
     with open(infile, "r") as file:
@@ -26,22 +30,36 @@ def parseProgram(infile: str = "example_programs/loop.atp++"):
 
 
 class run:
-    def __call__(self):
-        self.run_program(parseProgram())
+    def __call__(self, infile: str = "example_programs/counter_machine.atp++"):
+        self.run_program(parseProgram(infile))
 
     @ATPTools.copyParameters
     def run_program(self, program_state: Parser.ProgramState) -> Parser.ProgramState:
-        if program_state.current_pos == len(program_state.instructions) -1:
+        if program_state.current_pos == len(program_state.instructions) - 1:
             print("finished")
             print(program_state)
             return program_state
         return self.run_program(Parser.runProgram(program_state))
 
 
-# print(Lexer.JumpGreaterOrEqual.regex)
-start_time = time()
-sys.setrecursionlimit(0x1000000)
-threading.stack_size(256000000)  # set stack to 256mb
-t = threading.Thread(target=run())
-t.start()
-t.join()
+if __name__ == '__main__':
+    argParser = argparse.ArgumentParser(description="Interpreter for ATP++ programs")
+    argParser.add_argument('-i', '--input', type=str, nargs='?', help="Full path to the input program")
+    arguments = argParser.parse_args()
+    if arguments.input is None:
+        input_file = input("Please enter a path to the input program:")
+    else:
+        input_file = arguments.input
+    valid_file = False
+    while not valid_file:
+        if os.path.exists(input_file):
+            valid_file = True
+            break
+        input_file = input("Please enter a path to the input program:")
+    print(input_file)
+    start_time = time()
+    sys.setrecursionlimit(0x1000000)
+    threading.stack_size(256000000)  # set stack to 256mb
+    t = threading.Thread(target=run(), kwargs={"infile":input_file})
+    t.start()
+    t.join()
