@@ -13,7 +13,12 @@ import ATPTools
 
 # pparseProgram :: str -> Parser.ProgramState
 @ATPTools.copyParameters
-def parseProgram(infile: str = "example_programs/loop.atp++"):
+def parseProgram(infile: str = "example_programs/loop.atp++") ->Parser.ProgramState:
+    """
+    Parses a program from a given input file.
+    :param infile: str the path to a ATP++ file
+    :return: ProgramState
+    """
     with open(infile, "r") as file:
         program_text = list(Lexer.strToLines(file.read()))
         tokens = Lexer.lexInput(program_text)
@@ -30,11 +35,24 @@ def parseProgram(infile: str = "example_programs/loop.atp++"):
 
 
 class run:
+    """
+    Class for running our parser in a different thread to circumvent the stack limit on the python interpreter.
+    """
     def __call__(self, infile: str = "example_programs/counter_machine.atp++"):
+        """
+        Runs the parser
+        :param infile: str the path to a ATP++ file
+        :return: None
+        """
         self.run_program(parseProgram(infile))
 
     @ATPTools.copyParameters
     def run_program(self, program_state: Parser.ProgramState) -> Parser.ProgramState:
+        """
+        Runs the program based on the current program state that is provided.
+        :param program_state: The current program state
+        :return: the program state after executing the current line
+        """
         if program_state.current_pos == len(program_state.instructions) - 1:
             print("finished")
             print(program_state)
@@ -58,7 +76,6 @@ if __name__ == '__main__':
         else:
             print("The file at {0} does not exist".format(input_file))
         input_file = input("Please enter a path to the input program:")
-    print(input_file)
     start_time = time()
     sys.setrecursionlimit(0x1000000)
     threading.stack_size(256000000)  # set stack to 256mb

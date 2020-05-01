@@ -5,6 +5,11 @@ import Lexer
 
 
 class ProgramState:
+    """
+    Container for our program state, Abstract Data Type that does not contain any methods apart from string
+    representation.
+    """
+
     def __init__(self):
         self.variables = {}
         self.current_pos = -1
@@ -23,6 +28,12 @@ class ProgramState:
 # setVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def setVariable(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    Sets a variable to the correct value in the program state
+    :param ps: Current program state
+    :param parameters: paraameters for the operation
+    :return: new program state after the transformation
+    """
     if "right" in parameters.keys():
         ps, right = checkVariable(ps, "right", parameters)
     else:
@@ -38,6 +49,13 @@ def setVariable(ps: ProgramState, parameters: dict) -> ProgramState:
 @ATPTools.copyParameters
 def checkVariable(ps: ProgramState, key: str, parameters: dict) -> Union[
     Tuple[ProgramState, Union[str, float, int, None]], ProgramState]:
+    """
+    Checks that a variable is either the correct type (float/int) or if it is an existing variable in the program state
+    :param ps: current program state
+    :param key: variable name or immediate value
+    :param parameters: parameters for the operation
+    :return: Either str/float/int or None if there is an error.
+    """
     var = parameters[key]
     if type(var) == str:
         if var in ps.variables.keys():
@@ -52,6 +70,12 @@ def checkVariable(ps: ProgramState, key: str, parameters: dict) -> Union[
 # checkPrintParameters :: ProgramState -> dict -> Tuple[ProgramState, Either int float str]
 @ATPTools.copyParameters
 def checkPrintParameters(ps: ProgramState, parameters: dict) -> Tuple[ProgramState, Union[int, float, str]]:
+    """
+    Checks whether the parameters for the PRINT instruction are valid.
+    :param ps: current program state
+    :param parameters: the parameters for the instruction
+    :return: ProgramState with an int, float or str
+    """
     if parameters["right"] not in ps.variables.keys():
         if parameters["right"][0] == '"' and parameters["right"][-1] == '"':
             right = parameters["right"]
@@ -66,6 +90,14 @@ def checkPrintParameters(ps: ProgramState, parameters: dict) -> Tuple[ProgramSta
 @ATPTools.copyParameters
 def checkFuncArguments(ps: ProgramState, parameters: dict, instruction: str) -> Tuple[
     ProgramState, Union[float, int, None], Union[float, int, None]]:
+    """
+    Checks the arguments for a function and corrects them for the 2-argument versions of the functions by replacing the
+    left operand with the value of the target
+    :param ps: current program state
+    :param parameters: parameters for the function
+    :param instruction: which insrtuction is being checked for error messaging
+    :return: ProgramState, Left (either float, int or none on error) and Right (either float, int or None on error)
+    """
     if "target" not in parameters.keys() or parameters["target"] in ("", None):
         ps.errors.append("{1} expects a name on line {0}".format(ps.current_pos, instruction))
         return ps, None, None
@@ -92,6 +124,14 @@ def checkFuncArguments(ps: ProgramState, parameters: dict, instruction: str) -> 
 @ATPTools.copyParameters
 def checkJumpArguments(ps: ProgramState, parameters, instruction: str) -> Tuple[
     ProgramState, Union[float, int, None], Union[float, int, None]]:
+    """
+    Checks the arguments for jump instructions. These are different from the arguments for normal functions which is why
+    they have their own check functions.
+    :param ps: current program state
+    :param parameters: parameters for the jump
+    :param instruction: which insrtuction for debug information
+    :return: program state, Left (either float, int or None on error), Right (either float, int or None on error)
+    """
     if "target" not in parameters.keys() or parameters["target"] in ("", None):
         ps.errors.append("{1} expects a label on line {0}".format(ps.current_pos, instruction))
         return ps, None, None
@@ -114,6 +154,12 @@ def checkJumpArguments(ps: ProgramState, parameters, instruction: str) -> Tuple[
 # incrementVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def incrementVariable(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    Increments a variable
+    :param ps: current program state
+    :param parameters: parameters for the function
+    :return: program state after incrementing
+    """
     if "target" not in parameters.keys():
         ps.errors.append("target must be specified for increment on line {0}".format(ps.current_pos))
     ps.variables[parameters["target"]] = ps.variables[parameters["target"]] + 1
@@ -123,6 +169,12 @@ def incrementVariable(ps: ProgramState, parameters: dict) -> ProgramState:
 # decrementVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def decrementVariable(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    Decrement a variable
+    :param ps: current program state
+    :param parameters: parameters for the function
+    :return: program state after decrementing
+    """
     if "target" not in parameters.keys():
         ps.errors.append("target must be specified for decrement on line {0}".format(ps.current_pos))
     ps.variables[parameters["target"]] = ps.variables[parameters["target"]] - 1
@@ -132,6 +184,12 @@ def decrementVariable(ps: ProgramState, parameters: dict) -> ProgramState:
 # addToVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def addToVariable(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    Adds two values or variables and stores the result in the target
+    :param ps: current program state
+    :param parameters: parameters for the function
+    :return: program state after addition
+    """
     ps, left, right = checkFuncArguments(ps, parameters, "ADD")
     if left is None or right is None:
         return ps
@@ -142,6 +200,12 @@ def addToVariable(ps: ProgramState, parameters: dict) -> ProgramState:
 # subtractFromVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def subtractFromVariable(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    Subtract two values or variables and stores the result in the target
+    :param ps: current program state
+    :param parameters: parameters for the function
+    :return: program state after subtraction
+    """
     ps, left, right = checkFuncArguments(ps, parameters, "SUB")
     if left is None or right is None:
         return ps
@@ -152,6 +216,12 @@ def subtractFromVariable(ps: ProgramState, parameters: dict) -> ProgramState:
 # multiplyByVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def multiplyByVariable(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    Multiplies two values or variables and stores the result in the target
+    :param ps: current program state
+    :param parameters: parameters for the function
+    :return: program state after multiplication
+    """
     ps, left, right = checkFuncArguments(ps, parameters, "MUL")
     if left is None or right is None:
         return ps
@@ -162,6 +232,12 @@ def multiplyByVariable(ps: ProgramState, parameters: dict) -> ProgramState:
 # divideByVariable :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def divideByVariable(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    Divides two values or variables and stores the result in the target
+    :param ps: current program state
+    :param parameters: parameters for the function
+    :return: program state after division
+    """
     ps, left, right = checkFuncArguments(ps, parameters, "DIV")
     if left is None or right is None:
         return ps
@@ -175,6 +251,12 @@ def divideByVariable(ps: ProgramState, parameters: dict) -> ProgramState:
 # modulo :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def modulo(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    computes the modulo of two values or variables and stores the result in the target
+    :param ps: current program state
+    :param parameters: parameters for the function
+    :return: program state after modulo operation
+    """
     ps, left, right = checkFuncArguments(ps, parameters, "DIV")
     if left is None or right is None:
         return ps
@@ -188,6 +270,12 @@ def modulo(ps: ProgramState, parameters: dict) -> ProgramState:
 # jump_equal :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def jump_equal(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    Jumps to the target label if right is equal to left
+    :param ps: current program state
+    :param parameters: parameters for the function
+    :return: modified program state
+    """
     ps, left, right = checkJumpArguments(ps, parameters, "JE")
     if left is None or right is None:
         return ps
@@ -199,6 +287,12 @@ def jump_equal(ps: ProgramState, parameters: dict) -> ProgramState:
 # jump_not_equal :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def jump_not_equal(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    Jumps to the target label if right is not equal to left
+    :param ps: current program state
+    :param parameters: parameters for the function
+    :return: modified program state
+    """
     ps, left, right = checkJumpArguments(ps, parameters, "JNE")
     if left is None or right is None:
         return ps
@@ -210,6 +304,12 @@ def jump_not_equal(ps: ProgramState, parameters: dict) -> ProgramState:
 # jump_less_than :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def jump_less_than(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    Jumps to the target label if left is less than right
+    :param ps: current program state
+    :param parameters: parameters for the jump
+    :return: modified program state
+    """
     ps, left, right = checkJumpArguments(ps, parameters, "JL")
     if left is None or right is None:
         return ps
@@ -221,6 +321,12 @@ def jump_less_than(ps: ProgramState, parameters: dict) -> ProgramState:
 # jump_greater_than :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def jump_greater_than(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    Jumps to the target label if left is greater than right
+    :param ps: current program state
+    :param parameters: parameters for the jump
+    :return: modified program state
+    """
     ps, left, right = checkJumpArguments(ps, parameters, "JG")
     if left is None or right is None:
         return ps
@@ -232,6 +338,12 @@ def jump_greater_than(ps: ProgramState, parameters: dict) -> ProgramState:
 # jump_less_or_equal :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def jump_less_or_equal(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    Jumps to the target label if left is less than or equal to right
+    :param ps: current program state
+    :param parameters: parameters for the jump
+    :return: modified program state
+    """
     ps, left, right = checkJumpArguments(ps, parameters, "JLE")
     if left is None or right is None:
         return ps
@@ -243,6 +355,12 @@ def jump_less_or_equal(ps: ProgramState, parameters: dict) -> ProgramState:
 # jump_greater_or_equal :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def jump_greater_or_equal(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    Jumps to the target label if left is greater than or equal to right
+    :param ps: current program state
+    :param parameters: parameters for the jump
+    :return: modified program state
+    """
     ps, left, right = checkJumpArguments(ps, parameters, "JGE")
     if left is None or right is None:
         return ps
@@ -254,6 +372,12 @@ def jump_greater_or_equal(ps: ProgramState, parameters: dict) -> ProgramState:
 # ATPPrint :: ProgramState -> dict -> ProgramState
 @ATPTools.copyParameters
 def ATPPrint(ps: ProgramState, parameters: dict) -> ProgramState:
+    """
+    Prints the given value, variable or string
+    :param ps: current program state
+    :param parameters: parameters for the print
+    :return: program state
+    """
     ps, right = checkPrintParameters(ps, parameters)
     if right is None:
         ps.errors.append("Incorrect parameter for PRINT on line {0}".format(ps.current_pos))
@@ -264,7 +388,12 @@ def ATPPrint(ps: ProgramState, parameters: dict) -> ProgramState:
 
 # ATPDump :: ProgramState -> ProgramState
 @ATPTools.copyParameters
-def ATPDump(ps: ProgramState, current_parameters: dict) -> ProgramState:
+def ATPDump(ps: ProgramState) -> ProgramState:
+    """
+    Dumps the program state to stdio
+    :param ps: current program state
+    :return: program state
+    """
     print("-------------DUMPING PROGRAM STATE-------------")
     print(ps)
     print("-----------END DUMPING PROGRAM STATE-----------")
@@ -274,6 +403,13 @@ def ATPDump(ps: ProgramState, current_parameters: dict) -> ProgramState:
 # parseLabels :: List[Tuple[Instruction, dict]] -> int -> dict
 @ATPTools.copyParameters
 def parseLabels(tokens: List[Tuple[Lexer.Instruction, dict]], counter: int = 0) -> dict:
+    """
+    Parse the labels we find in the program so that we can jump to them.
+    This adds the labels to a dict with the key being the label and the value being the position
+    :param tokens: List of instructions
+    :param counter: current line number
+    :return: dict of labels with their position
+    """
     if len(tokens) == 0:
         return {}
     if tokens[0][0] == Lexer.Declare:
@@ -284,6 +420,11 @@ def parseLabels(tokens: List[Tuple[Lexer.Instruction, dict]], counter: int = 0) 
 
 @ATPTools.copyParameters
 def runProgram(ps: ProgramState) -> ProgramState:
+    """
+    Advances the program counter by one and executes the instruction at the program counter.
+    :param ps: current program state
+    :return: program state after execution of the current instruction
+    """
     if ps.current_pos == len(ps.instructions) - 1:
         return ps
     ps.current_pos += 1

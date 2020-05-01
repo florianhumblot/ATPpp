@@ -405,6 +405,11 @@ class Print(Instruction):
 # strToList :: str -> [str]
 @ATPTools.copyParameters
 def strToList(input_string: str) -> List[str]:
+    """
+    Explodes a string into a list of individual characters
+    :param input_string: the input
+    :return: a list of characters
+    """
     if input_string.find(' ') == -1:
         return [input_string]
     return [input_string[:input_string.index(" ")]] + strToList(input_string[input_string.index(" ") + 1:])
@@ -413,6 +418,11 @@ def strToList(input_string: str) -> List[str]:
 # stringToLines :: str -> [str]
 @ATPTools.copyParameters
 def strToLines(input_string: str) -> List[str]:
+    """
+    Explodes a string on newlines and returns each line as an element of a list.
+    :param input_string: The input
+    :return: list of lines
+    """
     if input_string.find('\n') == -1:
         return [input_string]
     return [input_string[:input_string.index('\n')]] + strToLines(input_string[input_string.index('\n') + 1:])
@@ -421,12 +431,24 @@ def strToLines(input_string: str) -> List[str]:
 # mapDataTypes :: dict -> dict
 @ATPTools.copyParameters
 def mapDataTypes(input_dict: dict) -> dict:
+    """
+    Maps the value of each parameter to a python datatype for execution
+    :param input_dict: the parameters of the current line
+    :return: the variables of the current line cast to their correct datatype
+    """
     return dict(map(lambda kv: (kv[0], strToDataType(kv[1])), input_dict.items()))
 
 
 # regexTest :: Instruction -> str -> Either dict None
 @ATPTools.copyParameters
 def regexTest(instruction_type: Instruction, string: str) -> Union[dict, None]:
+    """
+    Test an instruction type's regex on the current line, if it matches it returns the instruction and it's parameters
+    cast to the correct python data type
+    :param instruction_type: the class to test
+    :param string: the line to match
+    :return: Either the parameters of the line or None if the regex did not match
+    """
     pattern = re.compile(instruction_type.regex)
     match = re.fullmatch(pattern, string)
     return mapDataTypes(match.groupdict()) if match is not None else None
@@ -435,6 +457,13 @@ def regexTest(instruction_type: Instruction, string: str) -> Union[dict, None]:
 # strToDataType :: str -> Either str float int
 @ATPTools.copyParameters
 def strToDataType(input_string: str) -> Union[str, float, int]:
+    """
+    Tries to cast the given input string to a float and an int.
+    If the cast succeeds we return the cast result, if no conversion is possible to either float or int we assume that
+    the value is a string and return the string variant.
+    :param input_string:
+    :return:
+    """
     try:
         float(input_string)
         return float(input_string)
@@ -449,6 +478,11 @@ def strToDataType(input_string: str) -> Union[str, float, int]:
 # matchToken :: str -> Either Tuple[Instruction, dict] None
 @ATPTools.copyParameters
 def matchToken(input_string: str) -> Union[Tuple[Instruction, dict], None]:
+    """
+    Match a line to an instruction and extract the parameters.
+    :param input_string: The line of a program
+    :return: A tuple containing the instruction type and it's parameters or None is no match is found
+    """
     instruction_map = [
         SetSimple, Set,
         Declare, Increment, Decrement,
@@ -477,6 +511,11 @@ def matchToken(input_string: str) -> Union[Tuple[Instruction, dict], None]:
 # lexInput :: [str] -> [Tuple[Instruction, dict]]
 @ATPTools.copyParameters
 def lexInput(input_program: List[str]) -> List[Tuple[Instruction, dict]]:
+    """
+    Convert an input program to a list of instructions with their associated parameters.
+    :param input_program: the program as a list of lines (strings)
+    :return: a list of tuples containing the instructions and their parameters
+    """
     if len(input_program) == 0:
         return []
     return [matchToken(input_program[0])] + lexInput(input_program[1:])
