@@ -55,6 +55,8 @@ if __name__ == '__main__':
         if os.path.exists(input_file):
             valid_file = True
             break
+        else:
+            print("The file at {0} does not exist".format(input_file))
         input_file = input("Please enter a path to the input program:")
     print(input_file)
     start_time = time()
