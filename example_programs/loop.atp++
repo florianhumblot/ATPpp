@@ -1,8 +1,7 @@
-DECL .main
-SET a 10
-SET b
-SET b a
-PRINT a
-PRINT b
-# this a test
-DECL .test
+DECL .main          # Declare label .main
+SET a 10            # Set variable `a` to 10
+DECL .loop          # Declare label .loop
+DEC a               # Decrement variable `a`
+JE .halt a          # If `a` is 0 then jump to .halt
+JNE .loop a         # If `a` is not 0 then jump to .loop
+DECL .halt          # Declare label .halt
