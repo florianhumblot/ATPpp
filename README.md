@@ -11,7 +11,7 @@ This simple language supports the following features:
 	- subtraction
 	- multiplication
 	- division
-	- modulo 
+	- modulo
 	- increment
 	- decrement
 - Jumps
@@ -56,15 +56,19 @@ Running the interpreter without an argument will prompt you for a path within th
 Commands that have a "Simple" variant (annotated with a `Y` in the above table) have two possible signatures, a complex and a simple one.
 The complex signature of such an instruction is as follows (except for jumps):
 
-`KEYWORD target_variable left right` 
+`KEYWORD target_variable left right`
 
 This means that the value in `target_variable` will be overwritten by the result of the operation. i.e.:
-`ADD my_var 5 10` 
+`ADD my_var 5 10`
+
 Will result in `my_var` having a value of `15` irrespective of it's starting value.
+
 The simple signature of such an instruction is as follows:
-`KEYWORD target_variable right` 
+`KEYWORD target_variable right`
+
 This means that the value in `target_variable` is both the receiver of the computed value and the left operand for the selected operation. i.e.:
 
 `ADD myvar 20`
-If the value in `myvar` is `10` when running this instruction, the value stored in `myvar` after the instruction will be `30`. 
+
+If the value in `myvar` is `10` when running this instruction, the value stored in `myvar` after the instruction will be `30`.
 
