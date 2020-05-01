@@ -108,7 +108,7 @@ Adding new commands / functions is quite easy. While this is not supported withi
 1. Add a class that is a subclass of `Instruction` (or `Jump`) to `Lexer.py`
 2. Add the regular expression that matches the pattern of your instruction to the class as a static member
 	- Tip: use named groups in your regular expression to easily get the right group in your function. 
-		- Named groups are created as follows: `r"(?P<my_named_group>\w+)"` 
+		- Named groups are created as follows: `"(?P<my_named_group>\w+)"` 
 3. Add the name of your class to the `instruction_map` variable in the `matchToken` function in `Lexer.py` 
 4. Add a function that will execute your instruction to `Parser.py`.
 	- Make sure to use the `@ATPTools.copyParameters` decorator to get all your parameters by-value instead of by-reference
